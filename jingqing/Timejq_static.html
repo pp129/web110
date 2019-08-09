@@ -3,102 +3,104 @@
 <!DOCTYPE html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=8">
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Cache-control" content="no-cache">
-    <meta http-equiv="Cache" content="no-cache">
-    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
-    <script src="../js/echarts.js"></script>
-    <title></title>
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: '微软雅黑';
-        }
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+	<script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+	<script src="../js/echarts.js"></script>
+	<title></title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			font-family: '微软雅黑';
+		}
 
-        body {
-            height: 302px;
-            overflow: hidden;
-        }
+		body {
+			height: 302px;
+			overflow: hidden;
+		}
 
-        .time {
-            font-weight: 700;
-            color: #C4C4CE;
-        }
+		.time {
+			font-weight: 700;
+			color: #C4C4CE;
+		}
 
-        .title {
-            border: 0px solid red;
-            height: 35px;
-            margin-top: 20px;
-        }
+		.title {
+			border: 0px solid red;
+			height: 35px;
+			margin-top: 20px;
+		}
 
-        .mtitle {
-            border-bottom: 0px dashed #34D1FE;
-            line-height: 65px;
-            margin-left: 0px;
-            font-size: 35px;
-            color: #C4C4CE;
-            font-weight: bold;
-            float: left;
-            width: 910px;
-            height: 55px;
-        }
+		.mtitle {
+			border-bottom: 0px dashed #34D1FE;
+			line-height: 65px;
+			margin-left: 0px;
+			font-size: 35px;
+			color: #C4C4CE;
+			font-weight: bold;
+			float: left;
+			width: 910px;
+			height: 55px;
+		}
 
-        .mmeta span {
-            margin: 3px;
-        }
+		.mmeta span {
+			margin: 3px;
+		}
 
-        #time {
-            border: 0px solid green;
-            margin-left: 80px;
-            font-size: 44px;
-            line-height: 55px;
-            float: left;
-            width: 300px;
-            background-image: url('../images/jingqing/time.png');
-            background-repeat: no-repeat;
-        }
-    </style>
+		#time {
+			border: 0px solid green;
+			margin-left: 80px;
+			font-size: 44px;
+			line-height: 55px;
+			float: left;
+			width: 300px;
+			background-image: url('../images/jingqing/time.png');
+			background-repeat: no-repeat;
+		}
+	</style>
 </head>
 <body>
 <div class="title">
-    <div class="mtitle" id="date" style="border:0px solid red;float: left;width:280px;"></div>
-    <div class="mtitle" id="week" style="border:0px solid red;float: left;width:120px;margin-left: 40px;"></div>
-    <div class="mtitle" id="time" style="margin-left: 70px;color: #C4C4CE;">
-        <div id="hour1" class="time" style="border:0px solid red;margin-left: 6px;float: left"></div>
-        <div id="hour2" class="time" style="margin-left: 8px;float: left"></div>
-        <div id="JG" class="time" style="margin-left: 18px;float: left;line-height: 50px;"></div>
-        <div id="min1" class="time" style="margin-left: 18px;float: left"></div>
-        <div id="min2" class="time" style="margin-left: 10px;float: left"></div>
-        <div id="JG1" class="time" style="margin-left: 16px;float: left;line-height: 50px;"></div>
-        <div id="sec1" class="time" style="margin-left: 19px;float: left"></div>
-        <div id="sec2" class="time" style="margin-left: 10px;float: left"></div>
-    </div>
+	<div class="mtitle" id="date" style="border:0px solid red;float: left;width:280px;"></div>
+	<div class="mtitle" id="week" style="border:0px solid red;float: left;width:120px;margin-left: 40px;"></div>
+	<div class="mtitle" id="time" style="margin-left: 70px;color: #C4C4CE;">
+		<div id="hour1" class="time" style="border:0px solid red;margin-left: 6px;float: left"></div>
+		<div id="hour2" class="time" style="margin-left: 8px;float: left"></div>
+		<div id="JG" class="time" style="margin-left: 18px;float: left;line-height: 50px;"></div>
+		<div id="min1" class="time" style="margin-left: 18px;float: left"></div>
+		<div id="min2" class="time" style="margin-left: 10px;float: left"></div>
+		<div id="JG1" class="time" style="margin-left: 16px;float: left;line-height: 50px;"></div>
+		<div id="sec1" class="time" style="margin-left: 19px;float: left"></div>
+		<div id="sec2" class="time" style="margin-left: 10px;float: left"></div>
+	</div>
 </div>
 <script type="text/javascript">
     var updateData = {
-        "ymd": "2019年8月9日",
-        "week": "星期五",
-        "month": 8,
-        "hour": 12,
-        "year": 2019,
-        "day": 9,
-        "minute": 37,
-        "second": 44
-    }
+        "ymd": getNowFormatDate(),
+        "week": getDay(),
+        "month": new Date().getMonth(),
+        "hour": new Date().getHours(),
+        "year": new Date().getFullYear(),
+        "day": new Date().getDay(),
+        "minute": new Date().getMinutes(),
+        "second": new Date().getSeconds()
+    };
     var ymd, week, hour, minute, second, timer;
     var ymdTxt = $("#date"), weekTxt = $("#week"), JGTxt = $("#JG"), JG1Txt = $("#JG1");
-    var hour1Txt = $("#hour1"), hour2Txt = $("#hour2"), min1Txt = $("#min1"), min2Txt = $("#min2"), sec1Txt = $("#sec1"), sec2Txt = $("#sec2");
+    var hour1Txt = $("#hour1"), hour2Txt = $("#hour2"), min1Txt = $("#min1"), min2Txt = $("#min2"),
+        sec1Txt = $("#sec1"), sec2Txt = $("#sec2");
     var clientTime;	//客户端系统时间
     var secIndex;
     dateNow();
     setInterval(function () {
         dateNow();
     }, 1000 * 60 * 30);
+
     //获取标题日期
     function dateNow() {
         secIndex = 0;	//初始化为0
@@ -157,6 +159,53 @@
     //将时间单位数转换成双位数
     function timeDouble(time) {
         return time < 10 ? '0' + time : '' + time;
+    }
+
+    function getDay() {
+        var day = new Date().getDay(),
+            text = "";
+        switch (day) {
+            case 0:
+                text = "星期日";
+                break;
+            case 1:
+                text = "星期一";
+                break;
+            case 2:
+                text = "星期二";
+                break;
+            case 3:
+                text = "星期三";
+                break;
+            case 4:
+                text = "星期四";
+                break;
+            case 5:
+                text = "星期五";
+                break;
+            case 6:
+                text = "星期六";
+                break;
+        }
+        return text;
+    }
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "年";
+        var seperator2 = "月";
+        var seperator3 = "日";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator2 + strDate + seperator3;
+        return currentdate;
     }
 </script>
 </body>

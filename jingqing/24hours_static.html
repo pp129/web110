@@ -1,94 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=8">
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Cache-control" content="no-cache">
-    <meta http-equiv="Cache" content="no-cache">
-    <title>24小时警情走势</title>
-    <script src="../js/echarts.js"></script>
-    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="../js/common.js"></script>
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: '微软雅黑';
-        }
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+	<title>24小时警情走势</title>
+	<script src="../js/echarts.js"></script>
+	<script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="../js/common.js"></script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			font-family: '微软雅黑';
+		}
 
-        body {
-            height: 302px;
-            overflow: hidden;
-        }
+		body {
+			height: 302px;
+			overflow: hidden;
+		}
 
-        .title {
-            height: 35px;
-            margin-left: -10px;
-        }
+		.title {
+			height: 35px;
+			margin-left: -10px;
+		}
 
-        .mtitle {
-            margin-top: 15px;
-            position: absolute;
-            border: 0px solid red;
-            font-size: 32px;
-            font-weight: 700;
-            text-indent: 0em;
-            color: #34D1FE;
-            width: 350px;
-            height: 45px;
-        }
+		.mtitle {
+			margin-top: 15px;
+			position: absolute;
+			border: 0px solid red;
+			font-size: 32px;
+			font-weight: 700;
+			text-indent: 0em;
+			color: #34D1FE;
+			width: 350px;
+			height: 45px;
+		}
 
-        .mmeta span {
-            margin: 3px;
-        }
-    </style>
+		.mmeta span {
+			margin: 3px;
+		}
+	</style>
 </head>
 <body>
 <div class="title">
-    <div class="mtitle">&nbsp&nbsp24小时警情走势图</div>
-    <div style="position: absolute;margin:45px 0px 0px 18px"><img src="../images/jingqing/titleLine.png"></div>
+	<div class="mtitle">&nbsp&nbsp24小时警情走势图</div>
+	<div style="position: absolute;margin:45px 0px 0px 18px"><img src="../images/jingqing/titleLine.png"></div>
 </div>
 <div id="main" style="border:0px solid red;height:355px;width: 906px;margin: -35px 0px 0px 0px;"></div>
 </body>
 <script type="text/javascript">
-    var hoursData = {
-        "typeList": ["刑事类","治安类","交通类"],
-        "rcMap1": {
-            "刑事类":[10,10,20,10,10,30,40,50,40,20,10,10,10,10,10,10,10,10,10,10,10,10,10,10],
-            "治安类":[1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            "交通类":[1,1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        },
-        "rcMap": {
-            "刑事类":[1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            "治安类":[1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            "交通类":[1,1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        }
-    };
     var myChart = echarts.init(document.getElementById('main'));
-    var dataX = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6];
-    var option = {
+    var colorL = ['#ADFF1F', '#34D1FE', '#ED7F00'];
+    option = {
         grid: {
             top: '25%',
             left: '5%',
             bottom: '15%',
             borderColor: 'rgba(0,0,0,0)'
         },
+        calculable: false,
+        //用formatter回调函数显示多项数据内容
         tooltip: {
             trigger: 'axis',
-            textStyle: {
-                fontSize: 20
-            },
-            triggerOn: 'click',
-            formatter: function (a) {
-                var relVal = "";
-                //relVal = "总警情："+a[7].value+"件 </br>";
-                for (var i = 0, k = 0; i < nameList.length; i++, k += 2) {
-                    relVal += nameList[i] + ":" + a[k].value + "件 </br>";
+            formatter: function (params, ticket, callback) {
+                var htmlStr = '';
+                var valMap = {};
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    var xName = param.name;//x轴的名称
+                    var seriesName = param.seriesName;//图例名称
+                    var value = param.value;//y轴值
+                    var color = param.color;//图例颜色
+
+                    //过滤无效值
+                    if (value == '-') {
+                        continue;
+                    }
+
+                    //过滤重叠值
+                    if (valMap[seriesName] == value) {
+                        continue;
+                    }
+
+                    if (i === 0) {
+                        //   htmlStr += xName + '<br/>';//x轴的名称
+                    }
+                    htmlStr += '<div>';
+                    //为了保证和原来的效果一样，这里自己实现了一个点的效果
+                    htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:' + color + ';"></span>';
+
+                    //圆点后面显示的文本
+                    htmlStr += seriesName + '：' + value + '件';
+
+                    htmlStr += '</div>';
+                    valMap[seriesName] = value;
                 }
-                return relVal;
+                return htmlStr;
             }
         },
         legend: {
@@ -96,16 +108,17 @@
                 color: 'rgb(196,196,206)',
                 fontSize: 24
             },
-            data: '',
             x: 480,
             y: 75,
-            selectedMode: false
+            selectedMode: false,
+            data: ['交通类', '治安类', '刑事类']
         },
         toolbox: {
-            show: false
+            feature: {
+                saveAsImage: {}
+            }
         },
-        calculable: false,
-        xAxis: [{
+        xAxis: {
             nameTextStyle: {
                 color: 'rgb(196,196,206)'
             },
@@ -124,10 +137,10 @@
             type: 'category',
             boundaryGap: true,
             splitNumber: 25,
-            data: dataX
-        }],
+            data: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
+        },
         yAxis: [{
-            max: 30,
+            // max: 30,
             nameTextStyle: {
                 color: 'rgb(196,196,206)'
             },
@@ -153,160 +166,102 @@
             },
             type: 'value'
         }, {
-            max: 30,
+            // max: 30,
             show: false,
             name: '',
             splitNumber: 6,
             type: 'value'
         }],
-        series: ''
+        series: [
+            {
+                name: '交通类',
+                type: 'line',
+                symbol: 'circle',
+                data: [25, 40, 42, 37, 32],
+                smooth: true,
+                itemStyle: {
+                    normal: {
+                        color: colorL[0]
+                    }
+                }
+            },
+            {
+                name: '交通类',
+                symbol: 'circle',
+                type: 'line',
+                smooth: true,   //关键点，为true是不支持虚线，实线就用true
+                itemStyle: {
+                    normal: {
+                        color: colorL[0],
+                        lineStyle: {
+                            width: 2,
+                            type: 'dotted'  //'dotted'虚线 'solid'实线
+                        }
+                    }
+                },
+
+                data: ["-", "-", "-", "-", 32, 35, 33, 30, 25, 20, 14, 15, 10, 8, 7, 5, 3]
+            },
+            {
+                name: '治安类',
+                type: 'line',
+                symbol: 'circle',
+                smooth: true,
+                itemStyle: {
+                    normal: {
+                        color: colorL[1]
+                    }
+                },
+                data: [15, 20, 19, 17, 12]
+            },
+            {
+                name: '治安类',
+                type: 'line',
+                symbol: 'circle',
+                smooth: true,   //关键点，为true是不支持虚线，实线就用true
+                itemStyle: {
+                    normal: {
+                        color: colorL[1],
+                        lineStyle: {
+                            width: 2,
+                            type: 'dotted'  //'dotted'虚线 'solid'实线
+                        }
+                    }
+                },
+                data: ["-", "-", "-", "-", 12, 15, 20, 23, 20, 16, 12, 10, 8, 12, 10, 8, 5]
+            },
+            {
+                name: '刑事类',
+                symbol: 'circle',
+                type: 'line',
+                smooth: true,
+                itemStyle: {
+                    normal: {
+                        color: colorL[2]
+                    }
+                },
+                data: [2, 3, 5, 3, 2]
+            },
+            {
+                name: '刑事类',
+                type: 'line',
+                symbol: 'circle',
+                smooth: true,   //关键点，为true是不支持虚线，实线就用true
+                itemStyle: {
+                    normal: {
+                        color: colorL[2],
+                        lineStyle: {
+                            width: 2,
+                            type: 'dotted'  //'dotted'虚线 'solid'实线
+                        }
+                    }
+                },
+                data: ["-", "-", "-", "-", 2, 5, 7, 8, 10, 8, 6, 5, 4, 3, 2, 1, 2]
+            }
+
+        ]
     };
-
-    var dataBR = [],
-            dataZR = [],
-            nameList = [];
-    var date = new Date();
-    var hour = date.getHours();
-    var X = [50, 80, 110, 150, 180, 210, 240, 270, 310, 340, 370, 400, 440, 470, 510, 540, 570, 600, 630, 660, 690, 720, 760, 790];
-    var refreshTime = 30000;
-    $(function () {
-        getData();
-        showTip();
-//        refreshTime = getRefreshTime(1, '24小时警情走势');//30
-    });
-    setTimeout(function () {
-        getData();
-        showTip();
-        setInterval(function () {
-            getData();
-            showTip()
-        }, refreshTime);
-    }, 4000);
-
-    function showTip() {
-        var hour = date.getHours();
-        if (hour > 6 && hour < 24) {
-            hour = hour - 7;
-        } else if (hour < 7) {
-            hour = hour + 17;
-        }
-        myChart.dispatchAction({ //showTip功能
-            type: 'showTip',
-            x: X[hour],
-            y: 150
-        })
-    }
-
-    function getData() {
-        dataBR = hoursData.rcMap;
-        dataZR = hoursData.rcMap1;
-        nameList = hoursData.typeList;
-        var seriesItem = [];
-        var colorL = ['#ADFF1F', '#34D1FE', '#ED7F00'];
-        for (var i = 0; i < nameList.length; i++) {
-            var ySeries = {
-                smooth: true,
-                symbol: 'circle',
-                name: nameList[i],
-                type: 'line',
-                itemStyle: {
-                    normal: {
-                        color: colorL[i],
-                        lineStyle: {
-                            type: 'solid'
-                        }
-                    }
-                },
-                data: ''
-            };
-            var y1Series = {
-                smooth: true,
-                yAxisIndex: 1,
-                symbol: 'circle',
-                name: nameList[i],
-                type: 'line',
-                itemStyle: {
-                    normal: {
-                        color: colorL[i],
-                        lineStyle: {
-                            type: 'dashed'
-                        }
-                    }
-                },
-                data: ''
-            };
-            seriesItem.push(ySeries);
-            seriesItem.push(y1Series);
-        }
-        option.legend.data = nameList;
-        option.series = seriesItem;
-        myChart.setOption(option);
-        check();
-
-    }
-    var cMax = [];
-    var mMax = [];
-
-    function checkArrayMax(arrs) {
-        var max = arrs[0];
-        for (var i = 1, ilen = arrs.length; i < ilen; i += 1) {
-            if (arrs[i] > max) {
-                max = arrs[i];
-            }
-        }
-        return max;
-    }
-
-    function check() {
-        var date = new Date();
-        var hour = date.getHours();
-        for (var i = 0; i < nameList.length; i++) { //设置y轴最大值
-            cMax[i] = checkArrayMax(dataBR[nameList[i]]);
-            mMax[i + nameList.length] = checkArrayMax(dataZR[nameList[i]]);
-        }
-        option.yAxis[0].max = checkArrayMax(cMax) + 15;
-        option.yAxis[1].max = checkArrayMax(mMax) + 15;
-        if (hour > 6 && hour < 24) { //处理6-24小时段的数据
-            for (var i = 0; i < nameList.length; i++) {
-                var k = 0;
-                dataZR[nameList[i]] = dataZR[nameList[i]].concat(dataBR[nameList[i]].slice(0, 7));
-                dataBR[nameList[i]] = dataBR[nameList[i]].slice(7, hour + 1); //截取本日数据
-                dataZR[nameList[i]] = dataZR[nameList[i]].slice(7);
-                while (dataBR[nameList[i]].length < 24) {
-                    dataBR[nameList[i]].push('-');
-                }
-                while (k < hour - 7) {
-                    dataZR[nameList[i]][k] = '-';
-                    k++;
-                }
-                dataZR[nameList[i]][hour - 7] = dataBR[nameList[i]][hour - 7];
-            }
-        } else if (hour < 7) { //处理0-7时段数据
-            for (var i = 0; i < nameList.length; i++) {
-                dataBR[nameList[i]] = (dataZR[nameList[i]].slice(7)).concat(dataBR[nameList[i]].slice(0, hour + 1));
-                dataZR[nameList[i]] = dataZR[nameList[i]].slice(hour + 1, 7);
-                while (dataBR[nameList[i]].length < 24) {
-                    dataBR[nameList[i]].push('-');
-                }
-                while (dataZR[nameList[i]].length < 24) {
-                    dataZR[nameList[i]].unshift('-');
-                }
-                dataZR[nameList[i]][hour + 17] = dataBR[nameList[i]][hour + 17];
-            }
-        }
-        for (var i = 0, k = 0, j = 0; i < nameList.length * 2; i++) {
-            if (i % 2 == 0) {
-                (option.series)[i].data = dataBR[nameList[j]];
-                (option.series)[i].name = nameList[j];
-                j++;
-            } else {
-                (option.series)[i].data = dataZR[nameList[k]];
-                (option.series)[i].name = nameList[k];
-                k++;
-            }
-        }
-        myChart.setOption(option);
-    }
+    myChart.setOption(option);
 </script>
 
 </html>
