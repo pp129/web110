@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <title>数据分析</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: '微软雅黑';
+        }
+
+        body {
+            height: 302px;
+            overflow: hidden;
+        }
+
+        .mmeta span {
+            margin: 3px;
+        }
+
+        .data {
+            border: 0px solid red;
+            color: rgb(97, 192, 224);
+            width: 135px;
+            height: 39px;
+            text-align: left;
+            line-height: 52px;
+            font-size: 30px;
+            font-weight: bold;
+            text-indent: 1em;
+        }
+
+        .name {
+            margin-left: 0px;
+            border: 0px solid red;
+            color: rgb(196, 196, 206);
+            font-size: 22px;
+            width: 90px;
+            height: 32px;
+            float: left;
+            line-height: 52px;
+            text-align: left;
+        }
+
+        .topImg {
+            border: 1px solid red;
+            float: left;
+            margin-left: 0px;
+            width: 120px;
+            height: 52px;
+            color: white;
+            font-size: 22px;
+        }
+    </style>
+</head>
+<div id="main" style="width: 328px;height: 206px;border:0px solid red;margin:-16px 0px 0px 0px;padding:0;">
+    <table class="detail">
+        <tr>
+            <td>
+                <span class="name" style="text-indent: 0em;line-height: 52px;width:145px;">今日电话总数</span>
+            </td>
+            <td>
+                <div class="data" id="todayCall"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style=";">刑事案件</div>
+            </td>
+            <td>
+                <div class="data" id="xsaj"></div>
+            </td>
+            <td>
+                <div class="name" style=";">便民服务</div>
+            </td>
+            <td>
+                <div class="data" id="bmfw"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style=";">交通事故</div>
+            </td>
+            <td>
+                <div class="data" id="jtsg"></div>
+            </td>
+            <td>
+                <div class="name" style=";">求助</div>
+            </td>
+            <td>
+                <div class="data" id="qz"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style=";">治安案件</div>
+            </td>
+            <td>
+                <div class="data" id="zaaj"></div>
+            </td>
+            <td>
+                <div class="name" style=";">消防火警</div>
+            </td>
+            <td>
+                <div class="data" id="xfhj"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style=";">社会联动</div>
+            </td>
+            <td>
+                <div class="data" id="shld"></div>
+            </td>
+            <td>
+                <div class="name" style=";">警务协作</div>
+            </td>
+            <td>
+                <div class="data" id="jwxz"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style="width:145px;">昨日电话总数</div>
+            </td>
+            <td>
+                <div class="data" id="todayCall1"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="name" style=";">刑事案件</div>
+            </td>
+            <td>
+                <div class="data" id="xsaj1"></div>
+            </td>
+            <td>
+                <div class="name" style=";">交通事故</div>
+            </td>
+            <td>
+                <div class="data" id="jtsg1"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    function checkNull(src) {
+        if (src == null) {
+            return 0;
+        } else {
+            return src;
+        }
+    }
+
+    var idArr = ["#todayCall", "#xsaj", "#jtsg", "#zaaj", "#xfhj", "#shld", "#bmfw", "#qz", "#jwxz",
+        "#todayCall1", "#xsaj1", "#jtsg1"];
+    var nameArr = ['今日电话量总数', '今日刑事案件', '今日交通事故', '今日治安案件', '今日消防火警', '今日社会联动', '今日便民服务',
+        'qz', '今日警务协作', '昨日电话量总数', '昨日刑事案件', '昨日交通事故'];
+
+    /* var jsonData = {
+     "今日电话量总数": 3190,
+     "今日消防火警": 5,
+     "今日社会联动": 905,
+     "今日公安救助": 95,
+     "今日纠纷": 90,
+     "今日交通事故": 417,
+     "今日警务协作": 8,
+     "今日治安案件": 174,
+     "今日刑事案件": 94,
+     "昨日刑事案件": 143,
+     "昨日公安救助": 206,
+     "昨日电话量总数": 5450,
+     "昨日社会联动": 1163,
+     "昨日纠纷": 150,
+     "昨日交通事故": 682,
+     "昨日警务协作": 11,
+     "昨日治安案件": 309,
+     "昨日消防火警": 10
+     }*/
+    var jsonData = {
+        "今日电话量总数": 1000,
+        "今日消防火警": 5,
+        "今日社会联动": 1000,
+        "今日公安救助": 100,
+        "今日纠纷": 100,
+        "今日交通事故": 500,
+        "今日警务协作": 10,
+        "今日治安案件": 100,
+        "今日刑事案件": 100,
+        "昨日电话量总数": 5000,
+        "昨日社会联动": 1000,
+        "昨日纠纷": 150,
+        "昨日公安救助": 200,
+        "昨日刑事案件": 100,
+        "昨日交通事故": 500,
+        "昨日警务协作": 10,
+        "昨日治安案件": 500,
+        "昨日消防火警": 10
+    }
+    function gotData() {
+        var checkName = [];     //初始化变化数据存放组
+        var checkData = [];
+        $(".fadeToggle").removeClass("fadeToggle");     //移除类
+        for (var i = 0; i < idArr.length; i++) {
+            if ($(idArr[i]).html() != checkNull(jsonData[nameArr[i]]) || checkNull(jsonData[nameArr[i]]) == 0) {     //判断数据是否变化
+                checkName.push(idArr[i]);                   //将变化的数据放入数组中
+                checkData.push(checkNull(jsonData[nameArr[i]]));
+                $(idArr[i]).addClass("fadeToggle");         //将变化的数据添加类 以便淡入淡出
+            }
+        }
+        $(".fadeToggle").fadeToggle(1500);
+        setTimeout(function () {                              //在淡入之后更新数据
+            for (var i = 0; i < idArr.length; i++) {            //更新数据
+                $(checkName[i]).html(checkData[i]);
+            }
+        }, 1500);
+        $(".fadeToggle").fadeToggle(1500);
+    }
+    var refreshTime = 30000;
+    $(function () {
+//        refreshTime = getRefreshTime(1, '接线情况汇总');
+        gotData();
+    });
+    setInterval(function () {
+        gotData();
+    }, refreshTime);
+</script>

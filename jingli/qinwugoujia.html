@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <title>勤务构架</title>
+    <title></title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;;overflow: hidden;font-family: '微软雅黑';}
+        .bkg{background: url(../images/jingli/bckg.png) no-repeat;width:86px;color:#34D1FE;font-size:26px;font-weight:bold;height:38px;line-height: 36px;height:38px;text-align: center;border: 0px solid red;}
+        .data{color:#34D1FE;font-size:26px;font-weight:bold;height:38px;line-height: 36px;}
+        .ren{color:#34D1FE;font-weight:600}
+        .mtitle{margin-top:18px; margin-left:10px;border: 0px solid red;font-size: 32px;text-indent:0em;color: #34D1FE;font-weight: bold;width:350px;height: 40px; }
+    </style>
+</head>
+<body>
+    <div class="mtitle" >勤务力量构架</div>
+    <div style="position: absolute;margin:-10px 0px 0px 10px"><img src="../images/jingqing/titleLine.png"></div>
+    <div style="margin-top:30px;position: absolute;border: 0px solid red;"><img src="../images/jingli/fra1.png"></div>
+    <div id="table">
+    <div class="bkg" style="position: absolute;margin: 162px 0px 0px 80px;" id="24h"></div>
+    <div class="bkg" style="position: absolute;margin: 109px 0px 0px 242px" id="shld"></div>
+    <div class="bkg" style="position: absolute;margin: 168px 0px 0px 383px" id="yjjd"></div>
+    <div class="bkg" style="position: absolute;margin: 266px 0px 0px 150px" id="qfqz"></div>
+    <div class="bkg" style="position: absolute;margin: 266px 0px 0px 297px" id="ljq"></div>
+    <div class="bkg" style="position: absolute;margin: 354px 0px 0px 20px" id="tbd"></div>
+    <div class="bkg" style="position: absolute;margin: 344px 0px 0px 425px" id="zqll"></div>
+    <div class="bkg" style="position: absolute;margin: 456px 0px 0px 115px" id="fkyj"></div>
+    <div class="bkg" style="position: absolute;margin: 443px 0px 0px 345px" id="yjct"></div>
+    </div>
+    <!--<div style="margin:90px 0px 0px -2px;border:0px solid red;background: url(../images/jingli/fra1.png) no-repeat;background-position:center;width:550px;height:490px;position: absolute"></div>-->
+    <script type="text/javascript">
+        var x = [];
+        function gotData() {
+            $.post('../demo/qinwuliliang.do', function (data) {
+                var t = '24小时接处警';
+                var ljq = '拦截圈';
+                var qfqz = '群防群治';
+                var shld = '社会联动力量';
+                var tbd = '应急处置屯兵点';
+                var fkyj = '反恐应急处突警力';
+                var zqll = '节假日机关执勤力量';
+                var yjct = '节假日应急处突力量';
+                var yjjd = '应急机动备勤力量';
+                if(data != null){
+                    $("#24h").html(data[t]);
+                    $("#ljq").html(data[ljq]);
+                    $("#qfqz").html(data[qfqz]);
+                    $("#shld").html(data[shld]);
+                    $("#tbd").html(data[tbd]);
+                    $("#fkyj").html(data[fkyj]);
+                    $("#zqll").html(data[zqll]);
+                    $("#yjct").html(data[yjct]);
+                    $("#yjjd").html(data[yjjd]);
+                }
+            }, "json");
+        }
+        var refreshTime = 30000;
+        $(function(){
+        	refreshTime = getRefreshTime(2,'勤务架构')
+            gotData();
+        });
+        setTimeout(function(){
+            gotData();
+        },6000);
+        setInterval(function(){
+            gotData();
+            $("#table").fadeToggle(1500);
+            $("#table").fadeToggle(1500);
+        },refreshTime);
+    </script>
+</body>
+</html>

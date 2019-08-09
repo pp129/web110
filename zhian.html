@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>可视化大屏展示系统--治安防控图</title>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/bootstrap/js/bootstrap.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 1080px;
+            width: 1920px;
+            background: url(images/zhian/sky.png), url(images/zhian/bg001.png);
+            border: 0px blue solid;
+        }
+
+        #content {
+            height: 1080px;
+            width: 1910px;
+            font-family: '微软雅黑';
+            position: absolute;
+            overflow: hidden;
+            border: 0px yellow solid;
+        }
+
+        #top {
+            border: 0px solid red;
+            width: 1900px;
+            height: 145px;
+            overflow: hidden;
+            top: 0px;
+        }
+
+        #left {
+            border: 0px solid red;
+            height: 900px;
+            width: 430px;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        #middle {
+            border: 0px solid red;
+            height: 900px;
+            width: 1150px;
+            position: absolute;
+            overflow: hidden;
+            left: 395px;
+        }
+
+        #right {
+            border: 0px solid red;
+            height: 900px;
+            width: 380px;
+            position: absolute;
+            overflow: hidden;
+            left: 1520px;
+        }
+
+        /* #fenjuMap{height:930px;width:1420px;position:absolute;overflow:hidden;} */
+    </style>
+</head>
+
+<body>
+    <div class="modal fade" id="loginModal" tabindex="-1" name="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:25%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">登录校验失败：请重新登录</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="turnBack()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="top">
+            <iframe src="./zhian/top_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+        </div>
+        <div id="left">
+            <iframe frameborder="0" src="./zhian/fenjuxin_static.html" width="100%" height="100%" scrolling="no"></iframe>
+        </div>
+        <div id="middle">
+            <iframe frameborder="0" src="./zhian/fenjuMap_static.html" width="100%" height="100%" scrolling="no"></iframe>
+        </div>
+        <div id="right">
+            <iframe frameborder="0" src="./zhian/paichusuoxin_static.html" width="100%" height="100%" scrolling="no"></iframe>
+        </div>
+    </div>
+</body>
+
+</html>

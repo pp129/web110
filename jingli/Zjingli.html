@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <title>24小时警情走势</title>
+    <!-- 引入 echarts.js -->
+    <script src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <style type="text/css">
+        *{margin: 0;padding: 0;font-family: '微软雅黑';}
+        body{height: 302px;overflow: hidden;}
+        .title{height: 35px;margin-left:-10px;}
+        .mtitle{margin:-10px 0px 0px 160px;position: absolute;border:0px solid red;font-weight:700;font-size: 28px;text-indent:0em;color: #34D1FE;  float: left; }
+        .mmeta span{margin: 3px;}
+    </style>
+</head>
+<body>
+<div class="mtitle">&nbsp&nbsp总警情警力</div>
+<div id="main" style="border:0px solid red;width: 570px;height: 314px;margin: 10px 0px 0px 0px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    var dataJQ = [];
+    var dataJL = [];
+    var dataBL = [];
+    var option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            x:200,
+            y:30,
+            textStyle:{
+                fontSize:18,
+                color:'white'
+            },
+            data:['总警情','外事警力','警情/警力']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            top:'16%',
+            bottom: '18%',
+            containLabel: true
+        },
+        toolbox: {
+            show:false,
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            axisLine:{
+                lineStyle:{
+                    color:'rgb(196,196,206)'
+                }
+            },
+            axisLabel : {
+                show:true,
+                interval:0,
+                textStyle:{
+                    fontSize:16,
+                    color:'rgb(196,196,206)'
+                }
+            },
+            type: 'category',
+            boundaryGap: true,
+            alignWithLabel:true,
+            interval:0,
+            data: ['思明','湖里','海沧','集美','同安','翔安','机场','公交']
+        },
+        yAxis: {
+            axisLine:{
+                lineStyle:{
+                    color:'rgb(196,196,206)'
+                }
+            },
+            axisLabel : {
+                show:true,
+                interval:0,
+                textStyle:{
+                    fontSize:16,
+                    color:'rgb(196,196,206)'
+                }
+            },
+            splitLine: {show:false},
+            type: 'value'
+        },
+        series: [
+            {
+                symbol:'none',
+                smooth:true,
+                name:'总警情',
+                type:'line',
+                itemStyle:{
+                    normal:{
+                        color:'rgb(179,225,46)'
+                    }
+                },
+                data:dataJQ
+            },
+            {
+                symbol:'none',
+                smooth:true,
+                name:'外事警力',
+                type:'line',
+                itemStyle:{
+                    normal:{
+                        color:'rgb(62,212,255)'
+                    }
+                },
+                data:dataJL
+            },
+            {
+                symbol:'none',
+                smooth:true,
+                name:'警情/警力',
+                type:'line',
+                itemStyle:{
+                    normal:{
+                        color:'orange'
+                    }
+                },
+                data:dataBL
+            }/*,
+            {
+                symbol:'none',
+                itemStyle:{
+                  normal:{
+                      lineStyle:{
+                          type:'dashed'
+                      }
+                  }
+                },
+                smooth:true,
+                name:'规定比值',
+                type:'line',
+                data:[120, 132, 51, 34, 39, 33, 20 ,50]
+            }*/
+        ]
+    };
+
+
+    myChart.setOption(option);
+    /*------------------------------------------功能部分----------------------------------------------------------*/
+    function checkNull(src){
+        if(src == null){
+            return 0;
+        }else{
+            return src;
+        }
+    }
+    function gotData() {
+        $.post('../demo/JQJL.do', function (data) {
+            var dataN = ['思明分局','湖里分局','海沧分局','集美分局','同安分局','翔安分局','高崎国际机场分局','公共交通分局'];
+            for(var i = 0;i < 8;i++){
+                dataJQ[i] = checkNull(data.jqMap[dataN[i]]);
+            }
+            for(var i = 0;i < 8;i++){
+                dataJL[i] = checkNull(data.jlMap[dataN[i]]);
+            }
+        }, "json");
+    }
+    function check() {
+        for(var i=0;i<8;i++){
+            if(dataJQ[i] != 0 && dataJL[i] != 0){
+                dataBL[i]=(dataJQ[i] / dataJL[i])*10;
+            }else if(dataJQ[i] == 0 || dataJL[i] == 0){
+                dataBL[i]=0;
+            }
+        }
+    }
+    var refreshTime = 30000;
+    $(function(){
+    	refreshTime = getRefreshTime(2,'总警情警力对比');
+        gotData();
+        check();
+        (option.series)[0].data = dataJQ;
+        (option.series)[1].data = dataJL;
+        (option.series)[2].data = dataBL;
+        myChart.setOption(option);
+    });
+    setTimeout(function() {
+        gotData();
+        check();
+        (option.series)[0].data = dataJQ;
+        (option.series)[1].data = dataJL;
+        (option.series)[2].data = dataBL;
+        myChart.setOption(option);
+    },8000);
+    setInterval(function(){
+        gotData();
+        check();
+        (option.series)[0].data = dataJQ;
+        (option.series)[1].data = dataJL;
+        (option.series)[2].data = dataBL;
+        myChart.clear();
+        myChart.setOption(option);
+    },refreshTime);
+
+
+</script>
+</body>
+</html>

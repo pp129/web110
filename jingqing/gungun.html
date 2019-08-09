@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>左右无缝滚动</title>
+<style type="text/css">    
+        * {padding:0px; margin:0px;font-family: '微软雅黑';}    
+        #call{position:absolute;width:30px;height:30px;top:60px;left:35px;background: url(../images/jingqing/call.png) no-repeat center center;}
+        .box{width:900px;height:50px;background:#0B1019;position:relative;overflow:hidden;left:80px;top:50px;}  
+        /* .roll {width:auto;position:absolute;left:0;top:0;overflow:hidden;background:black;}    
+        .roll li{width:auto;font-size:28px;height:50px;float:left;font-weight: bold;color:red; overflow:hidden;text-align:center;}   */
+        #contentdiv{width:auto;font-size:28px;font-weight:bold;font-family:Arial, Helvetica, "宋体";height:50px;position:absolute;color:red;line-height:50px;;overflow:hidden;text-align:center;}       
+</style>    
+<script type="text/javascript" src="../js/jquery-1.9.1.js"></script> 
+<script type="text/javascript" src="../js/common.js"></script>
+</head> 
+<body>          
+	   <div id="call"></div>
+	   <div class="box">  
+             <!-- <ul class="roll" id="rollul">    
+                <li id="rollli"></li>  
+            </ul>     -->    
+            <div id="contentdiv"></div> 
+       </div>  
+<script type="text/javascript">  
+	var timer=null;
+	var rollWidth=0;
+	var contentSource=null;
+	var refreshTime =31000;
+    $(function () {
+    	refreshTime = getRefreshTime(1,'最近三条警情信息');
+    });
+	
+    getWarningInfo();
+	setTimeout(function(){
+		setInterval(function(){
+			//clearInterval(timer); 
+			getWarningInfo();
+		},refreshTime);
+	},1000);
+	/* //读取数据库
+	function getWarningInfo(){
+		$.post('../warning/jqgundong.do',function(data){
+			 var news1=data[0].ReceiveDt+'&nbsp;'+data[0].ReportAddress+'发生'+data[0].typename;
+			 var news2=data[1].ReceiveDt+'&nbsp;'+data[1].ReportAddress+'发生'+data[1].typename;
+			 var news3=data[2].ReceiveDt+'&nbsp;'+data[2].ReportAddress+'发生'+data[2].typename;
+			 var content=news3+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+													+news2+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+													+news1; 
+			var contentTem=news1+news2+news3;
+			if(contentSource!=contentTem){
+				clearInterval(timer);
+				contentSource=contentTem;
+				var contentWidth=(contentTem.length-42)*28+140+360;
+				$('#contentdiv').css("width",contentWidth);
+				rollWidth=contentWidth;
+				$('#contentdiv').html(content);
+				rollInfo();
+			}
+		},'json');
+	} */
+	//获取最新3条警情信息--可配置
+	function getWarningInfo(){
+		$.ajax({
+			type:'post',
+			url:'../warning/jqgundong.do',
+			data:{warningNum:3},
+			success:function(data){
+				var news1=data[0].ReceiveDt+'&nbsp;'+data[0].ReportAddress+'发生'+data[0].typename;
+				 var news2=data[1].ReceiveDt+'&nbsp;'+data[1].ReportAddress+'发生'+data[1].typename;
+				 var news3=data[2].ReceiveDt+'&nbsp;'+data[2].ReportAddress+'发生'+data[2].typename;
+				 var content=news3+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+														+news2+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+														+news1; 
+				var contentTem=news1+news2+news3;
+				if(contentSource!=contentTem){
+					clearInterval(timer);
+					contentSource=contentTem;
+					var contentWidth=(contentTem.length-42)*28+140+360;
+					$('#contentdiv').css("width",contentWidth);
+					rollWidth=contentWidth;
+					$('#contentdiv').html(content);
+					rollInfo();
+				}
+			},
+			dataType:'json'
+		});
+	}
+	
+	    function rollInfo(){  
+	        var  num = 0;  
+	        function goLeft(){  	     
+	        	if (num <= -rollWidth){  
+	               num =900;  
+	            }else{
+	            	num -= 2;  
+	            }  
+	            
+	            $("#contentdiv").css({left:num})  
+	        }  
+	        timer = setInterval(goLeft,30);  
+	        /* $(".box").hover(function(){  
+	            clearInterval(timer);  
+	        },
+	        function(){  
+	            timer = setInterval(goLeft,30);  
+	    });  */
+    };   
+</script>  
+
+</body>
+</html>

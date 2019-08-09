@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <title>警力</title>
+    <title></title>
+    <style type="text/css">
+        *{font-family: '微软雅黑';}
+        #top{border:0px solid red;width:240px;height:100px;margin: 10px 5px;position: absolute;}
+        #left1{border:0px solid red;width:170px;margin: 98px 10px;position: absolute;}
+        #left2{border:0px solid red;width:140px;margin: 180px 10px;position: absolute;}
+        #left3{border:0px solid red;width:140px;margin: 278px 10px;position: absolute;}
+        #right1{border:0px solid red;width:140px;margin:  98px 390px;position: absolute;}
+        #right2{border:0px solid red;width:140px;margin:  178px 390px;position: absolute;}
+        #right3{border:0px solid red;width:140px;margin:  283px 390px;position: absolute;}
+        #bottom{border:0px solid red;width:280px;margin: 400px 145px;position: absolute;}
+        .data{font-weight: 800}
+    </style>
+</head>
+<body style="background: url(../images/jingli/fra3.png) 0px -90px no-repeat;overflow: hidden;">
+<div id="main" style="position: relative;">
+    <div id="top">
+        <table>
+            <tr>
+                <td style="color:orange;font-size: 20px;">点位数</td>
+                <td style="color:rgb(196,196,206);font-size: 18px;">|</td>
+                <td style="color:rgb(179,225,46);font-size: 20px;">警力数</td>
+            </tr>
+            <tr>
+                <td style="color:orange;font-size: 15px;">单位：个</td>
+                <td style="color:rgb(196,196,206);font-size: 20px;"></td>
+                <td style="color:rgb(179,225,46);font-size: 15px;">单位：人</td>
+            </tr>
+        </table>
+    </div>
+    <div id="left1">
+        <table>
+            <tr>
+                <td id="24RC" class="data" style="color:orange;font-size: 24px;text-align: left;"></td>
+                <td style="color:rgb(196,196,206);position:fixed; top:110px; left:71px;font-size: 20px;text-align: center;">|</td>
+                <td  id="24PRC" class="data" style="position:fixed;top:108px; left:84px;color:rgb(179,225,46);font-size: 24px;"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px;border:0px solid red;">警务区</td>
+            </tr>
+        </table>
+    </div>
+    <div id="left2">
+        <table>
+            <tr>
+                <td class="data" id="pcsRC" style="color:orange;font-size: 24px";></td>
+                <td style="color:rgb(196,196,206);position:fixed; top:192px; left:58px;font-size: 20px">|</td>
+                <td class="data" id="pcsPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed;  top:190px; left: 70px;"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px">派出所</td>
+            </tr>
+        </table>
+    </div>
+    <div id="left3">
+        <table>
+            <tr>
+                <td class="data" id="jjRC" style="color:orange;font-size: 24px"></td>
+                <td style="color:rgb(196,196,206);position:fixed; bottom:148px; left:58px;font-size: 20px">|</td>
+                <td class="data" id="jjPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; bottom:144px; left:70px"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px">交警</td>
+            </tr>
+        </table>
+    </div>
+    <div id="right1">
+        <table>
+            <tr>
+                <td class="data" id="wzRC" style="color:orange;font-size: 24px;"></td>
+                <td style="color:rgb(196,196,206);position:fixed; TOP:110px; left:452px;font-size: 20px">|</td>
+                <td class="data" id="wzPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; TOP:108px; left:465px"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px">武装盘查</td>
+            </tr>
+        </table>
+    </div>
+    <div id="right2">
+        <table>
+            <tr>
+                <td class="data" id="jczRC" style="color:orange;font-size: 24px;"></td>
+                <td style="color:rgb(196,196,206);position:fixed; top:192px; left:452px;font-size: 20px">|</td>
+                <td class="data" id="jczPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; top:190px; left:465px"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px">检查站</td>
+            </tr>
+        </table>
+    </div>
+    <div id="right3">
+        <table>
+            <tr>
+                <td class="data" id="xtjRC" style="color:orange;font-size: 24px"></td>
+                <td style="color:rgb(196,196,206);position:fixed; bottom:143px; left:438px;font-size: 20px">|</td>
+                <td class="data" id="xtjPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; bottom:138px; left:450px"></td>
+            </tr>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: 18px">巡特警</td>
+            </tr>
+        </table>
+    </div>
+    <div id="bottom">
+        <table>
+            <tr>
+                <td style="color:rgb(196,196,206);font-size: large;text-indent: 2em">围村围点</td>
+                <td class="data" id="wcRC" style="color:orange;font-size: 24px;position:fixed; bottom: 25px; left:277px"></td>
+                <td style="color:rgb(196,196,206);position:fixed; bottom:29px; left:328px;font-size: 20px">|</td>
+                <td class="data" id="wcPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; bottom:25px; left:340px"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    var dataRC = [];
+    var dataPRC = [];
+    function checkNull(src){
+        if(src == null){
+            return 0;
+        }else{
+            return src;
+        }
+    }
+    function gotData() {
+        $.post('../demo/jinglishu.do', function (data) {
+            var dataN = ['警务区','武装盘查','派出所','检查站','交警','巡特警','围村围点'];
+            for(var i = 0;i < 7;i++){
+                dataRC[i] = checkNull(data.rcMap[dataN[i]]);
+            }
+            for(var i = 0;i < 7;i++){
+                dataPRC[i] = checkNull(data.policeRCMap[dataN[i]]);
+            }
+            $("#24RC").html(dataRC[0]);
+            $("#24PRC").html(dataPRC[0]);
+            $("#wzRC").html(dataRC[1]);
+            $("#wzPRC").html(dataPRC[1]);
+            $("#pcsRC").html(dataRC[2]);
+            $("#pcsPRC").html(dataPRC[2]);
+            $("#jczRC").html(dataRC[3]);
+            $("#jczPRC").html(dataPRC[3]);
+            $("#jjRC").html(dataRC[4]);
+            $("#jjPRC").html(dataPRC[4]);
+            $("#xtjRC").html(dataRC[5]);
+            $("#xtjPRC").html(dataPRC[5]);
+            $("#wcRC").html(dataRC[6]);
+            $("#wcPRC").html(dataPRC[6]);
+        }, "json");
+    }
+    $(function(){
+        gotData();
+    });
+    setTimeout(function() {
+        gotData();
+    },3000);
+    setInterval(function(){
+        gotData();
+        $(".data").fadeToggle(1500);    //淡入淡出
+        $(".data").fadeToggle(1500);
+    },30000);
+   /* <td class="data" id="jczRC" style="color:orange;font-size: 24px;"></td>
+            <td style="color:rgb(196,196,206);position:fixed; bottom:229px; left:448px;font-size: 14px;">个</td>
+            <td class="data" id="jczPRC" style="color:rgb(179,225,46);font-size: 24px;position:fixed; bottom:225px; left:475px"></td>
+            <td style="color:rgb(196,196,206);position:fixed; bottom:226px; left:463px;font-size: 20px">|</td>
+            <td style="color:rgb(196,196,206);position:fixed; bottom:227px; left:504px">人</td>*/
+</script>
+</body>
+</html>

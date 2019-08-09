@@ -1,0 +1,445 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/zrender-2.1.0/src/zrender.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <style type="text/css">
+    	*{margin: 0;padding: 0;font-family: '微软雅黑';}
+    	.mtitle{left:50px;position: absolute;;font-size: 45px;font-weight:bold;color: #34D1FE;width:430px;height: 75px;background: url(../images/jingqing/line.png)  0px 65px no-repeat; }
+    	#main{width:1700px;height:480px;position:absolute;top:50px;left:90px;border:0px solid red;}
+    	
+    	#ydiv{height:480px;width:70px;position:absolute;left:0px;top:0px;border:0px solid red;}
+    	#xydiv{height:440px;width:1600px;position:absolute;left:70px;top:0px;border:0px solid red;}
+    	#xdiv{height:40px;width:1600px;position:absolute;left:70px;top:440px;border:0px solid red;}
+    	.bardiv{position:absolute;width:35px;}
+    	.numdiv{font-size:28px;position:absolute;height:30px;width:50px;text-align:center;}
+    	
+    	#xzhou{height:2px;width:1580px;background:#C4C4CE;top:0px;}
+    	
+    	/*手动写出全部div
+    	 #xtbldiv{height:35px;width:1580px;top:2px;position:absolute;left:10px;}
+    	#xtbl{height:35px;width:1580px;}
+    	#xtbl tr td{height:35px;width:80px;color:#C4C4CE;font-size:23px;border:0px yellow solid;text-align:center;} */
+    	
+    	#yzhou{height:350px;width:2px;position:absolute;background:#C4C4CE;top:90px;left:70px;}
+    	
+    	#ylinediv{height:350px;width:15px;position:absolute;top:88px;left:58px;}
+    	#ylinetbl{height:350px;width:15px;}
+    	#ylinetbl tr td{height:66px;width:15px;border-bottom:2px #C4C4CE solid;}
+    	
+    	/*手动写出全部div
+    	 #ytbldiv{height:350px;width:55px;top:9px;position:absolute;left:5px;top:60px;}
+    	#ytbl{height:350px;width:55px;}
+    	#ytbl tr td{height:65px;width:30px;color:#C4C4CE;font-size:28px;border:0px red solid;text-align:center;} */
+    	
+    	.huruDiv{height:35px;width:55px;color:#C4C4CE;font-size:28px;position:absolute;left:0px;border:0px yellow solid;text-align:center;}
+    	.timeDiv{height:35px;width:35px;color:#C4C4CE;font-size:28px;position:absolute;top:10px;border:0px yellow solid;text-align:center;}
+    </style>
+</head>
+<body>
+	<div><span class="mtitle">24小时时段呼入统计</span><span style="left:480px;position: absolute;;font-size: 35px;color:rgb(196,196,206);width:430px;height: 75px;line-height: 65px;">(起始时间7:00)</span></div>
+	
+	<div id="main">
+		<div id="ydiv">
+			<div id="yzhou"></div>
+			<div id="ylinediv">
+				<table id="ylinetbl">
+					<tr>
+						<td style="border-bottom:2px #C4C4CE solid;border-top:2px #C4C4CE solid;"></td>						
+					</tr>
+					<tr>
+						<td></td>						
+					</tr>
+					<tr>
+						<td></td>						
+					</tr>
+					<tr>
+						<td></td>						
+					</tr>
+					<tr>
+						<td style="height:68px;"></td>						
+					</tr>
+					
+				</table>
+			</div>
+			<!-- <div id="ytbldiv">
+				<table id="ytbl">
+					<tr>
+						<td>600</td>						
+					</tr>
+					<tr>
+						<td>480</td>						
+					</tr>
+					<tr>
+						<td>360</td>						
+					</tr>
+					<tr>
+						<td>240</td>						
+					</tr>
+					<tr>
+						<td>120</td>						
+					</tr>
+					<tr>
+						<td>0</td>						
+					</tr>
+				</table>
+			</div> -->
+		</div>
+		<div id="xydiv">
+			<div id="bar0" class="bardiv"></div>
+			<div id="bar1" class="bardiv"></div>
+			<div id="bar2" class="bardiv"></div>
+			<div id="bar3" class="bardiv"></div>
+			<div id="bar4" class="bardiv"></div>
+			<div id="bar5" class="bardiv"></div>
+			<div id="bar6" class="bardiv"></div>
+			<div id="bar7" class="bardiv"></div>
+			<div id="bar8" class="bardiv"></div>
+			<div id="bar9" class="bardiv"></div>
+			<div id="bar10" class="bardiv"></div>
+			<div id="bar11" class="bardiv"></div>
+			<div id="bar12" class="bardiv"></div>
+			<div id="bar13" class="bardiv"></div>
+			<div id="bar14" class="bardiv"></div>
+			<div id="bar15" class="bardiv"></div>
+			<div id="bar16" class="bardiv"></div>
+			<div id="bar17" class="bardiv"></div>
+			<div id="bar18" class="bardiv"></div>
+			<div id="bar19" class="bardiv"></div>
+			<div id="bar20" class="bardiv"></div>
+			<div id="bar21" class="bardiv"></div>
+			<div id="bar22" class="bardiv"></div>
+			<div id="bar23" class="bardiv"></div>
+			
+			
+			<div id="num0" class="numdiv"></div>
+			<div id="num1" class="numdiv"></div>
+			<div id="num2" class="numdiv"></div>
+			<div id="num3" class="numdiv"></div>
+			<div id="num4" class="numdiv"></div>
+			<div id="num5" class="numdiv"></div>
+			<div id="num6" class="numdiv"></div>
+			<div id="num7" class="numdiv"></div>
+			<div id="num8" class="numdiv"></div>
+			<div id="num9" class="numdiv"></div>
+			<div id="num10" class="numdiv"></div>
+			<div id="num11" class="numdiv"></div>
+			<div id="num12" class="numdiv"></div>
+			<div id="num13" class="numdiv"></div>
+			<div id="num14" class="numdiv"></div>
+			<div id="num15" class="numdiv"></div>
+			<div id="num16" class="numdiv"></div>
+			<div id="num17" class="numdiv"></div>
+			<div id="num18" class="numdiv"></div>
+			<div id="num19" class="numdiv"></div>
+			<div id="num20" class="numdiv"></div>
+			<div id="num21" class="numdiv"></div>
+			<div id="num22" class="numdiv"></div>
+			<div id="num23" class="numdiv"></div>
+		</div>
+		<div id="xdiv">
+			<div id="xzhou"></div>
+			<!-- <div id="xtbldiv">
+				<table id="xtbl">
+					<tr>
+						<td>7</td>
+						<td>8</td>
+						<td>9</td>
+						<td>10</td>
+						<td>11</td>
+						<td>12</td>
+						<td>13</td>
+						<td>14</td>
+						<td>15</td>
+						<td>16</td>
+						<td>17</td>
+						<td>18</td>
+						<td>19</td>
+						<td>20</td>
+						<td>21</td>
+						<td>22</td>
+						<td>23</td>
+						<td>0</td>
+						<td>1</td>
+						<td>2</td>
+						<td>3</td>
+						<td>4</td>
+						<td>5</td>
+						<td>6</td>
+					</tr>
+				</table>
+			</div> -->
+		</div>
+	</div>
+	<script type="text/javascript">
+	var refreshTime =31000;
+    $(function () {
+    	refreshTime = getRefreshTime(6,'24小时呼入统计');
+    });
+	
+	
+	//为了减少浏览器性能消耗，已在后台处理
+	//计算呼入统计量柱状高度
+	 function xFormat(x){
+		 return x/numMax*350;
+	 }
+	 
+	
+	//var huruMap={  "0": 117,  "1": 218,  "2": 319,  "3": 420,  "4": 521,  "5": 222,  "6": 213,  "7": 120,  "8": 291,  "9": 222,  "10": 333,  "11": 433,  "12": 522,  "13": 44,  "14":337,  "15":228,  "17": 210,  "16": 229,  "19": 212,  "18": 211,  "21": 124,  "20": 123,  "23": 216,  "22": 415};
+	var timeMap={  "0": 17,  "1": 18,  "2": 19,  "3": 20,  "4": 21,  "5": 22,  "6": 23,  "7": 0,  "8": 1,  "9": 2,  "10": 3,  "11": 4,  "12": 5,  "13": 6,  "14": 7,  "15": 8,  "17": 10,  "16": 9,  "19": 12,  "18": 11,  "21": 14,  "20": 13,  "23": 16,  "22": 15};
+	var nowNum=0;
+	var huruMap;
+	var numMax;
+	var numMin;
+	
+	getmap();
+	setTimeout(function(){
+		setInterval('getmap();',refreshTime);
+	},1000);
+	
+	
+	//读取数据库，更新数据
+	function getmap(){
+		$.post('../warning/24huru.do',function(data){
+			 huruMap=data.huru;	//	呼入量整体
+			 numMax=data.numMax;	//呼入量最大值
+			 numMin=data.minNum;	//Y轴最小单位数值
+			 //alert(numMax+'--'+numMin);
+			getBar();
+			xMaxAuto();		//根据呼入统计量控制Y轴数值
+		},'json');
+		
+	}
+	
+	//根据返回数据绘制柱状图
+	function getBar(){
+	var nowDate=new Date().getHours();
+	
+	//绘制24个柱状
+	for(var i=0;i<24;i++){
+		var barheight=xFormat(huruMap[i]);	//柱状高度
+		var barTop=440-barheight;	//柱状top
+		var barLeft=35+timeMap[i]*65;	//柱状left
+		var numTop=barTop-45;	//柱状上方呼入数值top
+		var numLeft=barLeft-10;	//柱状上方呼入数值left
+		
+		if(timeMap[nowDate]==timeMap[i]){
+			var bar=document.getElementById('bar'+i);
+			if(huruMap[i]!=nowNum){
+				$('#bar'+i).fadeOut(1500);
+				$('#bar'+i).fadeIn(1500);
+			}
+			bar.style.height=barheight+'px';
+			bar.style.top=barTop+'px';
+			bar.style.left =barLeft+'px';
+			bar.style.background="#D18146";
+			
+		}
+		else if(timeMap[i]<timeMap[nowDate]){
+		var bar=document.getElementById('bar'+i);
+		bar.style.height=barheight+'px';
+		bar.style.top=barTop+'px';
+		bar.style.left =barLeft+'px';
+		bar.style.background="#5681E3";
+		}
+		else if(timeMap[i]>timeMap[nowDate]){
+			var bar=document.getElementById('bar'+i);
+			bar.style.height=barheight+'px';
+			bar.style.top=barTop+'px';
+			bar.style.left =barLeft+'px';
+			bar.style.background="grey";
+		}
+	//}
+	
+	//绘制24个柱状上方的数量
+	//for(var i=0;i<24;i++){
+		
+		if(timeMap[nowDate]==timeMap[i]){
+			var bar=document.getElementById('num'+i);
+			if(huruMap[i]!=nowNum){
+				nowNum=huruMap[i];
+				$('#num'+i).fadeOut(1500);
+				$('#num'+i).fadeIn(1500);
+			}
+			bar.style.top=numTop+'px';
+			bar.style.left =25+timeMap[i]*65+'px';
+			bar.style.color="#D18146";
+			bar.innerHTML=huruMap[i];
+			
+		}
+		else if(timeMap[i]<timeMap[nowDate]){
+		var bar=document.getElementById('num'+i);
+		bar.style.top=numTop+'px';
+		bar.style.left =numLeft+'px';
+		bar.style.color="#5681E3";
+		bar.innerHTML=huruMap[i];
+		}
+		else if(timeMap[i]>timeMap[nowDate]){
+			var bar=document.getElementById('num'+i);
+			bar.style.top=numTop+'px';
+			bar.style.left =numLeft+'px';
+			bar.style.color="grey";
+			bar.innerHTML=huruMap[i];
+		}
+	}
+	}
+	
+	
+	/*
+	绘制X轴数值 
+	*/
+	var timeNum=[7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5,6];
+	xTimer();
+	
+	function xTimer(){
+		for(var i=0;i<24;i++){
+			var timeDiv=$('<div></div>');
+			timeDiv.css('left',35+65*i);
+			timeDiv.addClass('timeDiv');
+			timeDiv.html(timeNum[i]);
+			timeDiv.appendTo($('#xdiv'));
+		}
+	}
+	
+	/*
+	绘制Y轴数值
+	*/
+	
+	//根据数据库呼入统计量大小控制Y轴数值
+	function xMaxAuto(){
+		for(var i=0;i<6;i++){
+			var huruDiv=$('<div></div>');
+			huruDiv.css('top',440-70*i-15);
+			huruDiv.addClass('huruDiv');
+			huruDiv.html(numMax-numMin*(5-i));
+			huruDiv.appendTo($('#ydiv'));
+		}
+	}
+	
+	
+	/* //未请求数据库
+	 var Mminute = 0,zrs=[], zrender, zrColor, CircleShape, PolygonShape, TextShape, PolylineShape,ImageShape;
+	 var colorlist=['#2EB2DA','#2EB2DA','#2EB2DA'];
+	 var maxNum;
+	 var policeMaxNum;
+	 var j=0;
+	 var num=30;	//整体偏移像素点数
+	 
+	
+	  //引入zrender
+	 require.config({
+           packages: [{
+               name: 'zrender',
+               location: '../js/zrender-2.1.0/src',
+               main: 'zrender'
+           }]
+       });
+	 //初始化zrender
+	   require(['zrender', 'zrender/tool/color', 'zrender/shape/Circle', 'zrender/shape/Polygon', 'zrender/shape/Text', 'zrender/shape/Polyline', 'zrender/shape/Image'], function(zrender0, color0, CircleShape0, PolygonShape0, TextShape0, PolylineShape0,ImageShape0) {
+           zrender = zrender0;
+           zrColor = color0;
+           PolygonShape = PolygonShape0;
+           CircleShape = CircleShape0;
+           TextShape = TextShape0;
+           PolylineShape = PolylineShape0;
+           ImageShape=ImageShape0;
+           xymap();
+           setInterval('xymap();',1000*60*60);
+	   });
+           
+	 //绘制X、Y轴横线及坐标值--读取数据库
+	 function xymap(){
+		 $.post('../warning/24huru.do',function(data){
+			 huruMap=data.huru;	//	呼入量整体
+			 numMax=data.numMax;	//呼入量最大值
+			 numMin=data.minNum;	//Y轴最小单位数值
+			 //alert(numMax+'--'+numMin);
+			 xyzrender();
+		},'json');
+	 }
+	 
+	 //绘制x y轴
+	 function xyzrender(){
+		 var yzrender=zrender.init(document.getElementById('ydiv'));
+		 var xzrender=zrender.init(document.getElementById('xdiv'));
+		 var yasix=[500,400,300]
+		 yzrender.addShape(new PolylineShape({
+			 style : {
+		        pointList : [[70, 90], [70, 440]],
+		        strokeColor : '#C4C4CE',
+		        lineWidth : 3
+		    },
+		}));
+		 
+		 for(var i=0;i<6;i++){
+			//绘制Y轴数值
+		  		yzrender.addShape(new TextShape({
+		  		    style : {
+		  		        x : 5,
+		  		        y : 440-70*i,
+		  		        text : numMax-numMin*(5-i),
+		  		        textFont:"normal 30px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+			
+			//绘制y轴突出小横线
+		  		yzrender.addShape(new PolylineShape({
+					 style : {
+				        pointList : [[70, 440-70*i], [60, 440-70*i]],
+				        strokeColor : '#C4C4CE',
+				        lineWidth : 2
+				    },
+				}));
+		 }
+		 
+		 
+		 
+		
+		 xzrender.addShape(new PolylineShape({
+			 style : {
+		        pointList : [[0, 0], [1570, 0]],
+		        strokeColor : '#C4C4CE',	//2EB2DA
+		        lineWidth : 3
+		    },
+		}));
+		 
+	 for(var i=0;i<17;i++){
+		//X轴坐标数值7-23
+	  		xzrender.addShape(new TextShape({
+	  		    style : {
+	  		        x :35+ i*65,
+	  		        y : 25,
+	  		        text : 7+i,
+	  		        textFont:"normal 30px '微软雅黑'",
+	  		        color:'#C4C4CE'
+	  		    },
+	  		  hoverable:false,
+	  		}));
+			 }
+	 
+	 for(var i=0;i<7;i++){
+			//X轴坐标数值0-6
+		  		xzrender.addShape(new TextShape({
+		  		    style : {
+		  		        x :35+ i*65+1110,
+		  		        y : 25,
+		  		        text : i,
+		  		        textFont:"normal 30px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+				 }
+		 }   */
+         
+		 
+		 
+	</script>
+</body>
+</html>

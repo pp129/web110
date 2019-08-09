@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <title>警情分布</title>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: '微软雅黑';
+        }
+
+        body {
+            height: 302px;
+            overflow: hidden;
+        }
+
+        .title {
+            height: 25px;
+        }
+
+        .mtitle {
+            font-size: 32px;
+            text-indent: 4em;
+            color: #34D1FE;
+            font-weight: bold;
+            float: left;
+        }
+
+        .mmeta span {
+            margin: 3px;
+        }
+    </style>
+</head>
+
+<body style="margin-left:0px;">
+<div style="height:00px;margin-left: 10px;padding:0;color:#34D1FE;font-weight: 200; ">
+    <div style="position: absolute;margin:35px 0px 0px 10px"><img src="../images/jingqing/titleLine.png"></div>
+    <div style="height: 0px;float: left; line-height: 53px;font-size: 32px;font-weight: 700;background: url(../images/jingqing/titleLine.png)  15px 41px no-repeat;">
+        &nbsp警情分布（同期）
+    </div>
+</div>
+<div id="main" style="border: 0px solid red;height:304px;width: 473px;margin-left:-60px;padding:10px"></div>
+
+<script type="text/javascript">
+    var dataB1 = [0, 0, 0, 0, 0, 0, 0, 0];
+    var dataS = [0, 0, 0, 0, 0, 0, 0, 0];
+    var dataB = [0, 0, 0, 0, 0, 0, 0, 0];
+    /*var fenbuData = {"szMap": {},
+        "bzMap": {
+            "集美分局": 191,
+            "高崎国际机场分局": 5,
+            "公共交通分局": 1,
+            "思明分局": 171,
+            "同安分局": 131,
+            "翔安分局": 61,
+            "湖里分局": 140,
+            "海沧分局": 35
+        }
+    }*/
+    var fenbuData = {
+        "szMap": {
+            "集美分局": 90,
+            "高崎国际机场分局": 9,
+            "公共交通分局": 9,
+            "思明分局": 90,
+            "同安分局": 90,
+            "翔安分局": 90,
+            "湖里分局": 90,
+            "海沧分局": 110
+        },
+        "bzMap": {
+            "集美分局": 100,
+            "高崎国际机场分局": 10,
+            "公共交通分局": 10,
+            "思明分局": 100,
+            "同安分局": 100,
+            "翔安分局": 100,
+            "湖里分局": 100,
+            "海沧分局": 100
+        }
+    };
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: '../js/echarts-2.2.7/build/source'
+        }
+    });
+
+    // 使用
+    require(
+            [
+                'echarts',
+                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('main'));
+                var option = {
+                    animationDurationUpdate: 2000,
+                    tooltip: {
+                        show: true,
+                        position: [100, 100]
+                    },
+                    legend: {
+                        textStyle: {
+                            fontSize: 16,
+                            color: 'rgb(196,196,206)'
+                        },
+                        x: 275,
+                        y: 50,
+                        padding: 0,
+                        show: true,
+                        data: ['上周', '本周', '本周超过上周'],
+                        selectedMode: false
+                    },
+                    grid: {
+                        borderColor: 'rgba(0,0,0,0)'
+                    },
+                    xAxis: [{
+                        axisTick: {
+                            show: false
+                        },
+                        boundaryGap: true,
+                        axisLabel: {
+                            textStyle: {
+                                fontSize: 16,
+                                color: 'rgb(196,196,206)'
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: 'rgb(196,196,206)',
+                                width: 1
+                            }
+                        },
+                        type: 'category',
+                        data: ["思明", "湖里", "海沧", "集美", "同安", "翔安", "机场", "公交"],
+                        splitLine: {
+                            show: false
+                        }
+                    }],
+                    yAxis: [{
+                        splitNumber: 4,
+                        axisLabel: {
+                            textStyle: {
+                                fontSize: 14,
+                                color: 'rgb(196,196,206)'
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: 'rgb(196,196,206)',
+                                width: 1
+                            }
+                        },
+                        type: 'value',
+                        splitLine: {
+                            show: false
+                        }
+                    }],
+                    series: [{
+                        barGap: 0,
+                        barCategoryGap: '44%',
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(35, 85,165)'
+                            }
+                        },
+                        barWidth: 10,
+                        name: "上周",
+                        type: "bar",
+                        data: ''
+                    }, {
+                        barGap: 0,
+                        barCategoryGap: '44%',
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(214,70,70)'
+                            }
+                        },
+                        barWidth: 10,
+                        name: "本周超过上周",
+                        stack: '本周',
+                        type: "bar",
+                        data: ''
+                    }, {
+                        barGap: 0,
+                        barCategoryGap: '44%',
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(14,203,172)'
+                            }
+                        },
+                        barWidth: 11,
+                        name: "本周",
+                        stack: '本周',
+                        type: "bar",
+                        data: ''
+                    }]
+                };
+
+                // 为echarts对象加载数据
+                function check() {
+                    for (var i = 0; i < 8; i++) {
+                        if (dataS[i] < dataB[i]) {
+                            dataB1[i] = dataB[i];
+                            dataB[i] = 0;
+                        } else {
+                            dataB1[i] = 0;
+                        }
+                    }
+                    (option.series)[2].data = dataB;
+                    (option.series)[1].data = dataB1;
+                    (option.series)[0].data = dataS;
+                    myChart.setOption(option);
+                }
+
+                function checkNull(src) {
+                    if (src == null) {
+                        return 0;
+                    } else {
+                        return src;
+                    }
+                }
+
+                function gotData() {
+                    var dataN = ['思明分局', '湖里分局', '海沧分局', '集美分局', '同安分局', '翔安分局', '高崎国际机场分局', '公共交通分局'];
+                    for (var i = 0; i < 8; i++) {
+                        dataS[i] = checkNull(fenbuData.szMap[dataN[i]]);
+                    }
+                    for (var i = 0; i < 8; i++) {
+                        dataB[i] = checkNull(fenbuData.bzMap[dataN[i]]);
+                    }
+                    if (dataS != null && dataB != null) {
+                        check();
+                    }
+                }
+
+                var refreshTime = 30000;
+                $(function () {
+//                    refreshTime = getRefreshTime(1, '警情分布柱状图');
+                    gotData();
+                });
+                setInterval(function () {
+                    myChart.clear();
+                    gotData();
+                }, refreshTime);
+            }
+    );
+</script>
+</body>
+
+</html>

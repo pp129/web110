@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+
+    <script src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <style type="text/css">
+    	*{margin: 0;padding: 0;font-family: '微软雅黑';}
+    	.mtitle{left:50px;position: absolute;;font-size: 45px;font-weight:bold;color: #34D1FE;width:430px;height: 75px;background: url(../images/jingqing/line.png)  0px 58px no-repeat; }
+    	#main{width:1900px;height:480px;position:absolute;top:50px;left:-35px;}
+    </style>
+</head>
+<body>
+	<div><span class="mtitle">24小时时段呼入统计</span><span style="left:480px;position: absolute;;font-size: 35px;color:rgb(196,196,206);width:430px;height: 75px;line-height: 65px;">(起始时间7:00)</span></div>
+	<div></div>
+	<div id="main"></div>
+	<script type="text/javascript">
+	var huruMap={  "0": 17,  "1": 18,  "2": 19,  "3": 20,  "4": 21,  "5": 22,  "6": 23,  "7": 0,  "8": 1,  "9": 2,  "10": 3,  "11": 4,  "12": 5,  "13": 6,  "14": 7,  "15": 8,  "17": 10,  "16": 9,  "19": 12,  "18": 11,  "21": 14,  "20": 13,  "23": 16,  "22": 15};
+	var hourMap={  "0": 17,  "1": 18,  "2": 19,  "3": 20,  "4": 21,  "5": 22,  "6": 23,  "7": 0,  "8": 1,  "9": 2,  "10": 3,  "11": 4,  "12": 5,  "13": 6,  "14": 7,  "15": 8,  "17": 10,  "16": 9,  "19": 12,  "18": 11,  "21": 14,  "20": 13,  "23": 16,  "22": 15};
+	var seriesData=[];
+	var myChart=echarts.init(document.getElementById('main'));
+	//getmap();
+	//setInterval("getmap()",1000*3);
+	//function getmap(){
+	var option = {
+		    title : {
+		        //text: '24小时呼入量',
+		       // subtext: '纯属虚构'
+		    },
+		    //tooltip : {
+		        //trigger: 'axis'
+		    //},
+		    calculable : false,
+		    xAxis : [
+		        {
+		            type : 'category',
+		            data : [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5,6],
+		            splitLine:{show:false},
+		            boundaryGap:true,
+		            axisTick:false,
+		            axisLabel: {
+                        show: true,
+                        interval: 0,
+                        textStyle: {
+                            fontSize: 30,
+                            color: '#C4C4CE'
+                            //color:'#34D1FE'
+                        }
+                    },
+                    axisLine:{
+                    	show:true,
+                    	onZero:true,
+                    	lineStyle:{
+                    		    color: '#34D1FE',
+                    		    width: 2,
+                    		    type: 'solid'
+                    	}
+                    }
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value',
+		            splitNumber: 5,
+		            splitLine:{show:false},
+		            boundaryGap:[0,0],
+		            axisLabel: {
+                        show: true,
+                        interval: 0,
+                        textStyle: {
+                            fontSize: 30,
+                            color: '#C4C4CE'
+                        }
+                    },
+                    axisLine:{
+                    	show:true,
+                    	onZero:true,
+                    	lineStyle:{
+                    		    color: '#34D1FE',
+                    		    width: 2,
+                    		    type: 'solid'
+                    	}
+                    }
+		        }
+		    ],
+		    series : [
+		       
+		        {
+		            name:'呼入量',
+		            type:'line',
+		            barWidth:25,
+		            smooth:true,
+		            itemStyle: {
+			        normal: {
+		                       color: '#34D1FE',	//AAAAAB
+		                       label : {
+	                                show : true,
+	                                position:'top',
+	                                textStyle : {
+	                                    fontSize : '25',
+	                                    //fontFamily : '微软雅黑',
+	                                    fontWeight : 'bold',
+	                                    color: '#AAAAAB',
+	                                }
+	                            },
+		                        }
+		                    },
+		            data:[],
+		            /* markPoint : {
+		            	
+		            	itemStyle:{
+		                    normal:{
+		                        label:{show:true},
+		                      color:'#D18146',
+		                    },
+		                    emphasis: {
+		                        label:{position:'top'}
+		                    }
+		                }, 
+		                data :[]
+		            }, */
+		          
+		        }
+		    ]
+		}
+	
+	//一分钟更新一次
+	getmap();
+	setInterval("getmap()",1000*30);
+	//setInterval(function(){alert('hhh')},1000*5);
+	function getmap(){
+		
+		$.post('../warning/24huru.do',function(data){
+			huruMap=data;
+			huruInfo();
+		},'json');
+		
+	}
+	
+	//绘制24小时呼入量柱状图
+	function huruInfo(){
+		var nowDate=new Date().getHours();
+		//alert(nowDate);
+		seriesData=[];
+		pointData=[];
+		//7-23点的数据
+		for(var i=7;i<24;i++){
+			if(i<nowDate){
+				var item={value:huruMap[i],
+						itemStyle: {
+	           				normal: {
+	                            color: 'rgb(35, 85,165)',	//#34D1FE
+	                            label : {
+	                                show : true,
+	                                position:'top',
+	                                textStyle : {
+	                                    fontSize : '25',
+	                                    //fontFamily : '微软雅黑',
+	                                    fontWeight : 'bold',
+	                                    color: 'rgb(35, 85,165)',
+	                                }
+	                            },
+	                        		}
+	                    	}
+				};
+				seriesData.push(item);
+			}else if(i==nowDate){
+				//alert('现在时间：'+nowDate);
+				var item={value:huruMap[i],
+						itemStyle: {
+	           				normal: {
+	                            color: '#D18146',
+	                            label : {
+	                                show : true,
+	                                position:'top',
+	                                textStyle : {
+	                                    fontSize : '25',
+	                                    //fontFamily : '微软雅黑',
+	                                    fontWeight : 'bold',
+	                                    color: '#D18146',
+	                                }
+	                            },
+	                        	}
+	                    	}
+				};
+				seriesData.push(item);
+			}else{
+				seriesData.push(huruMap[i]);
+			}
+		}
+		
+		//0-6点的数据
+		for(var k=0;k<7;k++){
+			seriesData.push(huruMap[k]);
+		}
+		
+		//标记点随时间推移
+           var  pointData=[
+                 {value : huruMap[nowDate], xAxis: hourMap[nowDate],itemStyle : { normal: {label :{
+                     show : true,
+                     position : 'top',
+                     //formatter : "{a} {b} {c}",
+                     textStyle : {
+                         color: 'blue'
+                     }}}},}
+             ];
+		option.series[0].data=seriesData;
+		//option.series[0].markPoint.data=pointData;
+		myChart.clear();
+		setTimeout(function(){
+			myChart.setOption(option);
+			},1000);
+		
+		//myChart.refresh();
+		//alert('完成');
+	}
+	</script>
+</body>
+</html>

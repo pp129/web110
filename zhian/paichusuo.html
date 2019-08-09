@@ -1,0 +1,352 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+    <title>ECharts</title>
+    <style type="text/css"> 
+    *{margin: 0;padding: 0;font-family: '微软雅黑';}
+    #main{width:410px;height:930px;position:absolute;left:-25px;top:0px;float:left;overfolw:hidden;z-index:100;animation: group 15s infinite linear;}  
+    /* #main{animation: group 10s infinite linear;} */
+    #tbldiv1{left:20px;top:50px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;z-index:100;}
+    #tbldiv2{left:20px;top:260px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;z-index:100;}
+    #tbldiv3{left:20px;top:470px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;z-index:100;}
+    #tbldiv4{left:20px;top:680px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;z-index:100;}
+    
+           @keyframes group{
+             0%{top:0px;opacity: 1;}
+             80%{top:0px;opacity: 1;}
+             85%{top:-20px;opacity: 0.5;}
+             89%{top:-50px;opacity: 0;}
+             90%{top:40px;opacity: 0;}
+             95%{top:30px;opacity: 0;}
+             100%{top:0px;opacity: 1;}
+         } 
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/zrender-2.1.0/src/zrender.js"></script>
+</head>
+<body>
+		<div id="main">
+			<div id="title"></div>
+			<div id="tbldiv1" class="tbldiv"></div>
+			<div id="tbldiv2" class="tbldiv"></div>
+			<div id="tbldiv3" class="tbldiv"></div>
+			<div id="tbldiv4" class="tbldiv"></div>
+		</div>
+	<script type="text/javascript">
+		 //未请求数据库
+		 var Mminute = 0,zrs=[], zrender, zrColor, CircleShape, PolygonShape, TextShape, PolylineShape,ImageShape;
+		 var colorlist=['#2EB2DA','#2EB2DA','#2EB2DA'];
+		 var maxNum;
+		 var policeMaxNum;
+		 var j=0;
+		 var num=30;
+		 //计算警情横条的宽度
+		 function xFormat(x){
+			 return x/maxNum*40;
+		 }
+		 
+		//计算警力横条的宽度
+		 function xPoliceFormat(x){
+			 return x/policeMaxNum*60;
+		 }
+		 //引入zrender
+		 require.config({
+	            packages: [{
+	                name: 'zrender',
+	                location: '../js/zrender-2.1.0/src',
+	                main: 'zrender'
+	            }]
+	        });
+		 //初始化zrender
+		   require(['zrender', 'zrender/tool/color', 'zrender/shape/Circle', 'zrender/shape/Polygon', 'zrender/shape/Text', 'zrender/shape/Polyline', 'zrender/shape/Image'], function(zrender0, color0, CircleShape0, PolygonShape0, TextShape0, PolylineShape0,ImageShape0) {
+	            zrender = zrender0;
+	            zrColor = color0;
+	            PolygonShape = PolygonShape0;
+	            CircleShape = CircleShape0;
+	            TextShape = TextShape0;
+	            PolylineShape = PolylineShape0;
+	            ImageShape=ImageShape0;
+	            for(var i=1;i<=4;i++){
+	                zrs.push(zrender.init(document.getElementById('tbldiv'+i)));
+	            }
+	            loadDate();
+	          //一分钟更新一次数据
+	    		//setInterval('loadDate()',1000*60);
+	    		   var timeer;
+	    			setInterval(function(){
+	    				
+	    				//alert('更新');
+	    				window.location.reload(); 
+	    				var myDate=new Date();
+	    				var nowdata=""+myDate.getDay()+myDate.getHours()+myDate.getMinutes();
+	    				 if(nowdata=='1910')
+	    				 location.reload(true);
+	    			},1000*30);
+	        });
+		 
+		 
+		 function loadDate(){
+			 $.post('../warning/paichusuodata.do',function(data){
+				 var paichusuodata=data.分局;
+				 maxNum=data.警情最大值;
+				 policeMaxNum=data.警力最大值;
+				 //maxNum=233;
+				 loadFenju(paichusuodata);
+				timeer=setInterval(function(){
+					
+					 j+=4;
+					 if(j+3>55){
+						 j=0;
+					 }
+					 for(var i=0;i<zrs.length;i++){
+						 zrs[i].clear();
+					 }
+					 setTimeout(function(){
+						 loadFenju(paichusuodata);
+					 },1000);
+					
+				 },15000);
+			 },'json');
+		 }
+		 
+		   //加载分局数据		  
+		 function  loadFenju(fenjudata){
+			 for(var i=0;i<zrs.length;i++){
+				 
+			   //绘制分局名字
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 30,
+		  		        y : 30,
+		  		        text : fenjudata[i+j].名称,
+		  		        textFont:"normal 26px '微软雅黑'",
+		  		        color:'#ED7F00'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+			   
+		  	   //绘制盗窃
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 25,
+		  		        y : 65,
+		  		        text : fenjudata[i+j].高发1==""?"":fenjudata[i+j].高发2==""?"("+fenjudata[i+j].高发1+")":"("+fenjudata[i+j].高发1,
+		  		        textFont:"normal 20px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	   
+		 	   //绘制诈骗
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 90,
+		  		        y : 65,
+		  		        text : fenjudata[i+j].高发1==""?"":fenjudata[i+j].高发2==""?"":fenjudata[i+j].高发2+")",
+		  		        textFont:"normal 20px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+			   
+		  	   //绘制盗窃数量
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 40,
+		  		        y : 90,
+  		        		text : fenjudata[i+j].高数1,
+  		        		 textFont:"bold 22px '微软雅黑'",
+		  		        color:'#ED7F00'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	   
+		  		 //绘制诈骗数量
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 100,
+		  		        y : 90,
+  		        		text : fenjudata[i+j].高数2,
+  		        		 textFont:"bold 22px '微软雅黑'",
+		  		        color:'#ED7F00'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	   
+		  	   //绘制本期文本
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 200-num,
+		  		        y : 40,
+  		        		text : '本期',
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#2EB2DA'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	   
+		  		 //绘制上期文本
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 265-num,
+		  		        y : 40,
+  		        		text : '上期',
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#5E73FB'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	   
+		  	//绘制本期警情等级
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 200-num,
+		  		        y : 85,
+  		        		text : fenjudata[i+j].本等,
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	
+		  	//绘制上期警情等级
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 265-num,
+		  		        y : 85,
+  		        		text : fenjudata[i+j].上等,
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	
+		  	 	//绘制警情
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 30,
+		  		        y : 125,
+  		        		text : '警情',
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	 	
+		  	 	//绘制警力
+		  		zrs[i].addShape(new TextShape({
+		  		    style : {
+		  		        x : 30,
+		  		        y : 165,
+  		        		text : '警力',
+  		        		 textFont:"normal 22px '微软雅黑'",
+		  		        color:'#C4C4CE'
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	 	
+		  		//绘制警情、警力之间的竖线
+		  		zrs[i].addShape(new PolylineShape({
+		  			 style : {
+		  		        pointList : [[255-num, 25], [255-num, 180]],
+		  		        strokeColor : '#2EB2DA',
+		  		        lineWidth : 1
+		  		    },
+		  		}));
+		  	   
+		  		//绘制本期警情横条
+		  		zrs[i].addShape(new PolygonShape({
+		  		    style : {
+		  		    	 pointList : [[255-num, 120], [255-num, 135], [255-num-xFormat(fenjudata[i+j].本情), 135], [255-num-xFormat(fenjudata[i+j].本情), 120]],
+		  		        //brushType : 'both',
+		  		        color : '#2EB2DA',
+		  		        lineWidth : 1,
+		  		        text : fenjudata[i+j].本情!=0?fenjudata[i+j].本情:"",
+		  		      	textFont:"bold 20px '微软雅黑'",
+		  		        textPosition : 'left'     
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  		
+		  	//绘制上期警情横条
+		  		zrs[i].addShape(new PolygonShape({
+		  		    style : {
+		  		    	 pointList : [[255-num, 120], [255-num, 135], [255-num+xFormat(fenjudata[i+j].上情), 135], [255-num+xFormat(fenjudata[i+j].上情), 120]],
+		  		        //brushType : 'both',
+		  		        color : '#5E73FB',
+		  		        lineWidth : 1,
+		  		        text : fenjudata[i+j].上情!=0?fenjudata[i+j].上情:"",
+		  		      	textFont:"bold 20px '微软雅黑'",
+		  		        textPosition : 'right'     
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  	
+		  		//绘制本期警力横条
+		  		zrs[i].addShape(new PolygonShape({
+		  		    style : {
+		  		    	 pointList : [[255-num, 160], [255-num, 175], [255-num-xPoliceFormat(fenjudata[i+j].本力), 175], [255-num-xPoliceFormat(fenjudata[i+j].本力), 160]],
+		  		        //brushType : 'both',
+		  		        color : '#2EB2DA',
+		  		        lineWidth : 1,
+		  		        //text : fenjudata[i+j].本力!=0?fenjudata[i+j].本力:"",
+		  		        text:fenjudata[i+j].本力!=0?fenjudata[i+j].本力:"",
+		  		      	textFont:"bold 20px '微软雅黑'",
+		  		        textPosition : 'left'     
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  		
+		  	//绘制上期警力横条
+		  		zrs[i].addShape(new PolygonShape({
+		  		    style : {
+		  		    	 pointList : [[255-num, 160], [255-num, 175], [255-num+xPoliceFormat(fenjudata[i+j].上力), 175], [255-num+xPoliceFormat(fenjudata[i+j].上力), 160]],
+		  		        //brushType : 'both',
+		  		        color : '#5E73FB',
+		  		        lineWidth : 1,
+		  		        //text : fenjudata[i+j].上力!=0?fenjudata[i+j].上力:"",
+		  		        text:fenjudata[i+j].上力!=0?fenjudata[i+j].上力:"",
+		  		      	textFont:"bold 20px '微软雅黑'",
+		  		        textPosition : 'right'     
+		  		    },
+		  		  hoverable:false,
+		  		}));
+		  		
+		  		//绘制本期比例
+				 zrs[i].addShape(new TextShape({
+			  			style : {
+			  		        x : 315,
+			  		        y : 129,
+			  		        brushType : 'fill',
+			  		        //color : colorList[inforData[key].等级-1],
+			  		        color:fenjudata[i+j].本例>0?'#EA0323':'#118408',
+			  		        lineWidth : 3,
+			  		        //text : fenjudata[i+j].本例==0?"555":'%',
+	  		        		text : fenjudata[i+j].本例!=0?fenjudata[i+j].本例+'%':"0",
+			  		        textFont : 'bold 20px 微软雅黑'
+			  		    },
+			  		  hoverable:false,
+			      	 }));
+			//绘制上升红色箭头
+				 zrs[i].addShape(new ImageShape({
+					    style : {
+					        x : 378,
+					        y : 118,
+					        image : fenjudata[i+j].本例>0?"../images/zhian/up.gif":"",
+					        width : 12,
+					        height : 20
+					    }
+					}));
+			   }
+		   }
+	</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script src="../js/echarts.js"></script>
+    <title>顶部样式</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: '微软雅黑';
+        }
+
+        body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+    </style>
+</head>
+<body>
+<div style="position:absolute;left:740px;top:36px;font-size: 38px;width:500px;height:70px;font-weight:bold;color:rgb(62,212,255);line-height: 70px;">
+    社&nbsp;&nbsp;会&nbsp;&nbsp;治&nbsp;&nbsp;安&nbsp;&nbsp;防&nbsp;&nbsp;控&nbsp;&nbsp;等&nbsp;&nbsp;级
+</div>
+<div id="qidong"
+     style="position:absolute;left:778px;top:90px;width:500px;height:50px;font-size: 28px;color:white;line-height: 50px;"></div>
+<script type="text/javascript">
+    $(function () {
+        loadData();
+    });
+
+    setInterval('loadData()', 60 * 60 * 1000);
+    function loadData() {
+        document.getElementById('qidong').innerHTML = "(2019年07月21日至08月03日)";//"(2019年07月21日至08月03日)"
+        /*$.post('../warning/qidongData.do',function(data){
+         document.getElementById('qidong').innerHTML=data;//"(2019年07月21日至08月03日)"
+         },'json');*/
+    }
+</script>
+</body>
+</html>

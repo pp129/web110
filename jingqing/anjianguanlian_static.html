@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <title>案件关联</title>
+    <script src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <style type="text/css">
+        * {
+            font-family: '微软雅黑';
+        }
+
+        .data {
+            border: 0px solid red;
+            height: 38px;
+            width: 69px;
+            color: rgb(204, 70, 70);
+            font-size: 23px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<div style="position: absolute;margin:34px 0px 0px -10px"><img src="../images/jingqing/titleLine.png"></div>
+<div id="main"
+     style="width: 423px;height:345px;border:0px solid red;float:left;margin:10px 0px 0px -18px;z-index: 888"></div>
+<div style="border: 0px solid red;height:245px;width:100px;position:absolute;margin-top: 50px;margin-left: 288px;">
+    <table id="tableRight"></table>
+</div>
+<div id="dataa"></div>
+<div id="main1"
+     style="border:0px solid red;position: absolute;height:375px;width: 583px;margin-top: -20px;margin-left:242px;padding:0;z-index: 9999;"></div>
+<div id="centrData"
+     style="position: absolute;height: 100px;width:150px;border:0px solid red;margin:135px 0px 0px 456px;">
+    <div id="cen1"
+         style="height: 30px;width:148px;border:0px solid red;color:#34D1FE;text-align: center;font-size: 22px;"></div>
+    <div id="cen2"
+         style="height: 40px;width:148px;border:0px solid red;color:#34D1FE;text-align: center;font-size: 32px;font-weight: 700;"></div>
+</div>
+</body>
+<script type="text/javascript">
+    var guanlianData = {
+        "brMap": {
+            "盗窃": 6,
+            "交通案件": 6,
+            "社会联动": 6,
+            "刑事案件": 6,
+            "治安案件": 6
+        }, "typeName": [], "zrMap": {}, "rcMap": {
+            "盗窃":[
+                {
+                    "Name":"湖里",
+                    "caseNum":1
+                },{
+                    "Name":"思明",
+                    "caseNum":1
+                },{
+                    "Name":"集美",
+                    "caseNum":1
+                },{
+                    "Name":"同安",
+                    "caseNum":1
+                },{
+                    "Name":"海沧",
+                    "caseNum":1
+                },{
+                    "Name":"翔安",
+                    "caseNum":1
+                }
+            ],
+            "交通案件":[
+                {
+                    "Name":"湖里",
+                    "caseNum":1
+                },{
+                    "Name":"思明",
+                    "caseNum":1
+                },{
+                    "Name":"集美",
+                    "caseNum":1
+                },{
+                    "Name":"同安",
+                    "caseNum":1
+                },{
+                    "Name":"海沧",
+                    "caseNum":1
+                },{
+                    "Name":"翔安",
+                    "caseNum":1
+                }
+            ],
+            "社会联动":[
+                {
+                    "Name":"湖里",
+                    "caseNum":1
+                },{
+                    "Name":"思明",
+                    "caseNum":1
+                },{
+                    "Name":"集美",
+                    "caseNum":1
+                },{
+                    "Name":"同安",
+                    "caseNum":1
+                },{
+                    "Name":"海沧",
+                    "caseNum":1
+                },{
+                    "Name":"翔安",
+                    "caseNum":1
+                }
+            ],
+            "刑事案件":[
+                {
+                    "Name":"湖里",
+                    "caseNum":1
+                },{
+                    "Name":"思明",
+                    "caseNum":1
+                },{
+                    "Name":"集美",
+                    "caseNum":1
+                },{
+                    "Name":"同安",
+                    "caseNum":1
+                },{
+                    "Name":"海沧",
+                    "caseNum":1
+                },{
+                    "Name":"翔安",
+                    "caseNum":1
+                }
+            ],
+            "治安案件":[
+                {
+                    "Name":"湖里",
+                    "caseNum":1
+                },{
+                    "Name":"思明",
+                    "caseNum":1
+                },{
+                    "Name":"集美",
+                    "caseNum":1
+                },{
+                    "Name":"同安",
+                    "caseNum":1
+                },{
+                    "Name":"海沧",
+                    "caseNum":1
+                },{
+                    "Name":"翔安",
+                    "caseNum":1
+                }
+            ]
+        }
+    }
+    for (var i = 0; i < 6; i++) {
+        var trRight = "<tr><td class='data' id='data" + i + "'></td><tr>"
+        $('#tableRight').append(trRight);
+    }
+    var dataBR = [0, 0, 0, 0, 0, 0],
+            dataZR = [0, 0, 0, 0, 0, 0],
+            nameList = [],
+            dataFill = [],
+            dataMax = [],
+            z = 0,
+            arrowY = [50, 100, 150, 200, 230, 270],
+            setMax = 0, dataC = [0, 0, 0, 0, 0, 0];
+    var interval;
+    /**
+     * 左侧柱状定义
+     */
+    var myChart = echarts.init(document.getElementById('main'));
+    var option = {
+        title: {
+            text: '关注案件',
+            left: 5,
+            top: -5,
+            textStyle: {
+                fontWeight: 700,
+                color: '#34D1FE',
+                fontSize: 32
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            textStyle: {
+                fontSize: 22
+            },
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: function (a) {
+                return a[0].name + '<br />' + "<img src=''>" + a[0].seriesName + '：' + a[0].value + '<br />' + "<img src=''>" + a[1].seriesName + '：' + a[1].value;
+            }
+        },
+        legend: {
+            show: false,
+            data: ['昨日', '今日', '类别总量']
+        },
+        grid: {
+            left: '13%',
+            top: '12%',
+            right: '23%',
+            bottom: '6%',
+            containLabel: true
+        },
+        xAxis: {
+            show: false,
+            type: 'value'
+        },
+        yAxis: {
+            inverse: true,
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    fontSize: 22,
+                    color: 'rgb(196,196,206)'
+                },
+            },
+            axisLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+            type: 'category',
+            data: nameList
+        },
+        series: [{
+            barWidth: 17,
+            name: '今日',
+            type: 'bar',
+            stack: '总量',
+            label: {
+                normal: {
+                    show: false,
+                    position: 'insideRight'
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: 'rgb(32, 60, 128)'
+                }
+            },
+            data: ''
+        }, {
+            name: '超出',
+            type: 'bar',
+            stack: '总量',
+            label: {
+                normal: {
+                    textStyle: {
+                        color: 'rgb(209,75,75)',
+                        fontSize: 18
+                    },
+                    show: false,
+                    position: 'right'
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: 'rgb(209,75,75)'
+                }
+            },
+            data: ''
+        }, {
+            name: '填充',
+            type: 'bar',
+            stack: '总量',
+            label: {
+                normal: {
+                    textStyle: {
+                        color: 'rgb(209,75,75)',
+                        fontSize: 18
+                    },
+                    show: false,
+                    position: 'right'
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: 'rgb(29,35,53)'
+                }
+            },
+            data: ''
+        }]
+    };
+    myChart.setOption(option);
+    /**
+     * 右侧圆环定义
+     */
+    var myPie = echarts.init(document.getElementById('main1'));
+    var option1 = {
+        animationDurationUpdate: 800,
+        tooltip: {
+            show: false,
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            show: true,
+            orient: 'vertical',
+            x: 420,
+            y: 80,
+            textStyle: {
+                color: 'rgb(196,196,206)',
+                fontSize: 22
+            },
+            data: []
+        },
+        toolbox: {
+            show: false
+        },
+        calculable: false,
+        series: [{
+            hoverAnimation: false,
+            selectedOffset: 15,
+            selectedMode: false,
+            name: '警情占比',
+            type: 'pie',
+            radius: ['37%', '50%'],
+            center: ['49%', '50%'],
+            data: []
+        }]
+    };
+    var seriesItem = [];
+    var legendItem = [];
+    var colorSeries = ['#FE6567', '#FD8448', '#FEC962', '#3EB17E', '#ABDA9B', '#5081E3', '#7F57E0', '#E46EB6'];
+    /**
+     * 功能部分
+     */
+
+
+    function showTip(len) {
+        if (z < len - 1) {
+            myChart.dispatchAction({ //showTip功能
+                type: 'showTip',
+                x: 180,
+                y: arrowY[z]
+            });
+            z++;
+        } else if (z == len - 1) {
+            myChart.dispatchAction({ //showTip功能
+                type: 'showTip',
+                x: 180,
+                y: arrowY[z]
+            });
+            z = 0;
+        }
+    }
+
+    function checkName(arr, brr) {
+        var brrSum = 0;
+        for (var i = 0; i < brr.length; i++) { //对数组进行排序
+            for (var j = i + 1; j < brr.length; j++) {
+                if (brr[i] < brr[j]) {
+                    var temp = brr[i];
+                    brr[i] = brr[j];
+                    brr[j] = temp;
+                    var namp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = namp;
+                }
+            }
+        }
+
+        for (var i = 0; i < brr.length; i++) { //数组求和
+            brrSum += brr[i];
+        }
+        for (var i = 0; i < arr.length; i++) { //数组格式化 分局名称+案件百分比数
+            if (arr[i] != '') {
+                if (arr[i].substr(0, 2) == '高崎') {
+                    arr[i] = '机场' + ": " + ' ' + brr[i];
+                } else if (arr[i].substr(0, 2) == '公共') {
+                    arr[i] = '公交' + ": " + ' ' + brr[i];
+                } else {
+                    arr[i] = arr[i].substr(0, 2) + ": " + ' ' + brr[i] /*parseInt(brr[i] / brrSum * 100) + "%"*/;
+                }
+            }
+        }
+        return arr;
+    }
+
+    function makePie(rcMap, rcI) {
+        var rcNum = [],
+                i = 0,
+                rcName = [],
+                seriesItem = [],
+                legendItem = [];
+        for (var key in rcMap[rcI]) {
+            rcNum[i] = rcMap[rcI][key].caseNum;
+            rcName[i] = rcMap[rcI][key].Name;
+            i++;
+        }
+        checkName(rcName, rcNum);
+        for (var i = 0; i < rcName.length; i++) {
+            var legItem = {
+                name: rcName[i],
+                icon: 'circle'
+            };
+            var item = {
+                itemStyle: {
+                    normal: {
+                        color: colorSeries[i],
+                        label: {
+                            show: false
+                        },
+                        labelLine: {
+                            show: false
+                        }
+                    }
+                },
+                value: rcNum[i],
+                name: rcName[i]
+            };
+            legendItem.push(legItem);
+            seriesItem.push(item);
+        }
+        option1.legend.data = legendItem;
+        (option1.series)[0].data = seriesItem;
+        myPie.setOption(option1);
+    }
+
+    function checkArrayMax(arrs) {
+        var max = arrs[0];
+        for (var i = 1, ilen = arrs.length; i < ilen; i += 1) {
+            if (arrs[i] > max) {
+                max = arrs[i];
+            }
+        }
+        return max;
+    }
+
+    function checkNull(src) {
+        for (var i = 0; i < nameList.length; i++) {
+            if (src[i] == null) {
+                src[i] = 0;
+            }
+        }
+    }
+
+    function arrayIndex(dataC, rcBR, nameList, rcMap) { //从大到小排序
+        var temp, tempBR, tempNL, tempRC;
+        for (var i = 0; i < dataC.length; i++) {
+            for (var j = i + 1; j < dataC.length; j++) {
+                if (dataC[i] < dataC[j]) {
+                    temp = dataC[i];
+                    dataC[i] = dataC[j];
+                    dataC[j] = temp;
+
+                    tempBR = rcBR[i];
+                    rcBR[i] = rcBR[j];
+                    rcBR[j] = tempBR;
+
+                    tempNL = nameList[i];
+                    nameList[i] = nameList[j];
+                    nameList[j] = tempNL;
+
+                    tempRC = rcMap[i];
+                    rcMap[i] = rcMap[j];
+                    rcMap[j] = tempRC;
+                }
+            }
+        }
+        console.log(rcMap);
+        return dataC;
+    }
+
+    var refreshTime = 30000;
+    $(function () {
+        getData();
+//        refreshTime = getRefreshTime(1, '24小时警情走势');
+        setTimeout(function () {
+            makeYourFather();
+            setInterval(function () {
+                getData();
+            }, 30000);
+        }, 1000);
+    });
+    setInterval(function () {
+        makeYourFather();
+    }, 5000);
+
+    var anjian = "",
+            rcI = 0, rcMap = [], anjianBR = [], anjianZR = [];
+    var kFlag = 0;
+    var KK = 1;
+    function getData() {
+        //console.log("取数据啦!");
+        anjianBR = [];
+        anjianZR = [];
+        anjian = guanlianData;
+//                nameList = data.typeName;
+        nameList = ['盗窃', '交通案件', '社会联动', '刑事案件', '治安案件'];
+        for (var i = 0; i < nameList.length; i++) {
+            anjianBR.push(anjian.brMap[nameList[i]]);
+            anjianZR.push(anjian.zrMap[nameList[i]]);
+        }
+        console.log(anjianBR + "///" + anjianZR);
+        for (var i = 0; i < nameList.length; i++) {
+            rcMap[i] = anjian.rcMap[nameList[i]]; //取rcMap
+            checkNull(anjianBR);
+            checkNull(anjianZR);
+            dataC[i] = anjianBR[i] - anjianZR[i]; //超出数据；
+            if (dataC[i] <= 0) {
+                dataC[i] = 0;
+            }
+            if (nameList[i].length == 2) {
+                nameList[i] = nameList[i].slice(0, 1) + "       " + nameList[i].slice(1);
+            }
+            dataMax[i] = anjianBR[i] + dataC[i];
+        }
+        console.log("排序前dataC:" + dataC + "////" + "anjianBR:" + anjianBR + "////" + "nameList:" + nameList);
+        setMax = checkArrayMax(dataMax) + checkArrayMax(dataC); //计算柱状最大值
+        arrayIndex(dataC, anjianBR, nameList, rcMap); //排序
+    }
+    function makeYourFather() {
+        $("#dataa").empty();
+        option.xAxis.max = setMax;
+        if (nameList.length <= 6) { //数据量<6时
+            //dataC = dataC.sort(sortNumber).reverse();
+            for (var i = 0; i < nameList.length; i++) {
+                dataFill[i] = setMax - anjianBR[i] - dataC[i];
+                if (dataC[i] <= 0) {
+                    dataC[i] = '';
+                } else {
+                    var y = [70, 115, 159, 202, 246, 290];
+                    var upArrow = "<div style='position:absolute;margin-left:372px;margin-top:" + (y[i] - 7) + "px'><img src='../images/jingqing/up.gif'></div>";
+                    $("#dataa").append(upArrow);
+                }
+                $('#data' + i).text(dataC[i]);
+            }
+            option.series[0].data = anjianBR;
+            option.series[1].data = dataC;
+            option.series[2].data = dataFill;
+            option.yAxis.data = nameList;
+            myChart.setOption(option);
+            console.log("排序后dataC:" + dataC + "////" + "anjianBR:" + anjianBR + "////" + "nameList:" + nameList);
+            showTip(nameList.length);
+            makePie(rcMap, rcI);
+            $('#cen1').text(nameList[rcI]);
+            $('#cen2').text((anjianBR)[rcI]);
+            rcI++;
+            if (rcI == nameList.length) {
+                rcI = 0;
+            }
+
+        } else { //length>6时
+            var upArrow = [];
+            for (var i = nameList.length; i < 12; i++) {
+                dataC.push('');
+                dataFill.push('');
+            }
+            for (var i = 0; i < nameList.length; i++) {
+                dataFill[i] = setMax - anjianBR[i] - dataC[i];
+                if (dataC[i] <= 0) {
+                    dataC[i] = '';
+                } else {
+                    var y = [70, 115, 159, 202, 246, 290, 70, 115, 159, 202, 246, 290];
+                    upArrow[i] = "<div style='position:absolute;margin-left:372px;margin-top:" + (y[i] - 7) + "px'><img src='../images/jingqing/up.gif'></div>";
+                }
+            }
+            for (var i = 0; i < 6; i++) {
+                $('#data' + i).text(dataC[i]);
+                $('#dataa').append(upArrow[i]);
+            }
+            option.series[0].data = anjianBR.slice(0, 6);
+            option.series[1].data = dataC.slice(0, 6);
+            option.series[2].data = dataFill.slice(0, 6);
+            option.yAxis.data = nameList.slice(0, 6);
+            myChart.setOption(option);
+            if (KK == 0) {
+                $('.data').empty();
+                $('#dataa').empty();
+                for (var i = 0; i < 6; i++) {
+                    $('#data' + i).text(dataC[i]);
+                    $('#dataa').append(upArrow[i]);
+                }
+                option.series[0].data = anjianBR.slice(0, 6);
+                option.series[1].data = dataC.slice(0, 6);
+                option.series[2].data = dataFill.slice(0, 6);
+                option.yAxis.data = nameList.slice(0, 6);
+                myChart.setOption(option);
+                KK = 1;
+            }
+            if (kFlag < 5) {
+                showTip(nameList.length);
+            } else if (kFlag == 5) {
+                showTip(6);
+            } else if (kFlag > 5) { //kFlag大于4时减去6轮播
+                showTip(nameList.length - 6);
+                $('.data').empty();
+                $('#dataa').empty();
+                for (var i = 0; i < 6; i++) {
+                    $('#data' + i).text(dataC[i + 6]);
+                    $('#dataa').append(upArrow[i + 6]);
+                }
+                option.series[0].data = anjianBR.slice(6);
+                option.series[1].data = dataC.slice(6);
+                option.series[2].data = dataFill.slice(6);
+                option.yAxis.data = nameList.slice(6);
+                myChart.setOption(option);
+            }
+            kFlag++;
+            if (kFlag == nameList.length) {
+                kFlag = 0;
+                KK = 0;
+            }
+        }
+    }
+</script>
+
+</html>

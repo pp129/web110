@@ -1,0 +1,578 @@
+﻿   <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+    <title>ECharts</title>
+    <style type="text/css"> 
+	/* #main{width:820px;height:1060px;position:absolute;} */
+	*{margin: 0;padding: 0;font-family: '微软雅黑';}
+	#main{height:720px;width:820px;position: absolute;top: 55px;left:0px;}
+	#mainJq{height:720px;width:820px;position: absolute;top: 55px;left:0px;z-index:10;}
+	#mainJl{height:720px;width:820px;position: absolute;top: 55px;left:0px;z-index:10;}
+    #mmap{height:600px;width:720px;position: absolute;top: 0px;left: 70px;background: url(../images/jingli/ditu.png) no-repeat center center;}
+	.title{width:350px;height: 48px;position:absolute;top:20px;left:10px;}	
+	.mtitle{font-size: 32px;color: #34D1FE;font-weight: bold;float: left;background: url(../images/jingli/titleLine.png)  0px 46px no-repeat;width:350px;height: 47px; }
+	#mainBot{width:800px;height:310px;position:absolute;float:left;left:5px;top:730px;z-index:10;}
+	#jltable tr td{width:93px;height:52px;font-size: 32px;color: #ED7F00;text-align:center;}
+	
+	
+	#rlmap1{height:300px;width:300px;position:absolute;top:150px;left:210px;z-index:101;background:url(../images/jingli/rlmap2.png )no-repeat center center;}
+	#rlmap2{height:200px;width:200px;position:absolute;top:420px;left:320px;z-index:102;background:url(../images/jingli/rlmap5.png )no-repeat center center;}
+	#rlmap3{height:300px;width:300px;position:absolute;top:360px;left:120px;z-index:103;background:url(../images/jingli/rlmap5.png )no-repeat center center;}
+	#rlmap4{height:300px;width:300px;position:absolute;top:220px;left:410px;z-index:104;background:url(../images/jingli/rlmap5.png )no-repeat center center;}
+	#rltl{height:30px;width:8px;position:absolute;top:220px;left:410px;z-index:104;background:url(../images/jingli/rltl.png )no-repeat center center;}
+	
+	.numdiv{width:auto;height:30px;position:absolute;border:0px red solid;color:#ED7F00;font-size:30px;text-align:left;line-height:30px;font-weight:bold;overflow:hidden;}
+	#hc{left:125px;top:511px;}
+	#jm{left:125px;top:291px;}
+	#ta{left:700px;top:96px;}
+	#xa{left:755px;top:301px;}
+	#hl{left:700px;top:616px;}
+	#sm{left:505px;top:678px;}
+	#jc{left:745px;top:526px;}
+	#gj{left:247px;top:626px;}
+	
+	</style>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../data/accident.js"></script>
+    <script type="text/javascript" src="../data/jljingqing.js"></script>
+    <script type="text/javascript" src="../data/jinglidata.js"></script>
+     <script type="text/javascript" src="../js/common.js"></script>
+</head>
+
+<body>
+    <div class="title">
+        <div class="mtitle">实时勤务力量分布</div>
+    </div>
+    <div id="main"></div>
+    <div id="mainJq"></div>
+    <div id="mainJl"></div>
+    <div id="mmap"></div>
+    <div id="sm" class="numdiv"></div>
+    <div id="hl" class="numdiv"></div>
+    <div id="hc" class="numdiv"></div>
+    <div id="jm" class="numdiv"></div>
+    <div id="ta" class="numdiv"></div>
+    <div id="xa" class="numdiv"></div>
+    <div id="gj" class="numdiv"></div>
+    <div id="jc" class="numdiv"></div>
+    <script type="text/javascript">
+    var dx1=118.06628;
+	var dy1=24.53975;
+	var dx2=118.1200;	//true:118.1055     false:118.1145
+	var dy2=24.4755;	//true:24.4530		false:24.4700
+	var kx=0.42;		    //true:0.5		false:0.44
+	var ky=0.33;	    //true:0.35			false:0.33
+    var myMap = null;
+	var achart = null;
+	var _ZR = null;
+    var TextShape = null;
+    var LineShape = null;
+    var PolylineShape = null;
+    var circleShape=null;
+    var PolygonShape =null; 
+    var polyLineList=null;  //区名称、折线坐标集合
+    var tt=0;
+    
+    //热力地图警力数量刷新时间
+    var refreshTime =31000;
+    $(function () {
+    	refreshTime = getRefreshTime(2,'警力信息汇总');
+    });
+	
+  //热力地图勤务力量分布刷新时间
+    var maprefreshTime =31000;
+    $(function () {
+    	maprefreshTime = getRefreshTime(2,'勤务力量分布');
+    });
+    
+     require.config({
+        paths: {
+            echarts: '../js/echarts-2.2.7/build/dist'
+        }
+    }); 
+   function xFormat(x){
+		return (x-dx1)*kx+dx2;
+	}
+	function yFormat(y){
+		return (y-dy1)*ky+dy2;
+	}
+
+    require(['echarts', 'echarts/chart/bar', 'echarts/chart/line','echarts/chart/map','echarts/chart/heatmap'], function(ec) {
+		//厦门地图边框
+         require('echarts/util/mapData/params').params.xiamen = {
+		    getGeoJson: function (callback) {
+		        //$.getJSON('xiamen.json',callback);
+		        callback({
+				    "type": "FeatureCollection",
+				    "features": [{
+				        "type": "Feature",
+				        "id": "350203",
+				         "properties": {
+				            "name": "厦门OD",
+				            "cp": [118.087828, 24.462059],
+				            "childNum": 4
+				        }, 
+				        "geometry": {
+				            "type": "MultiPolygon",
+				             "coordinates": [
+				                [
+				                    [
+				                        [	118.00		,	24.60	],
+				                        [	118.00		,	24.40	],
+				                        [	118.29		,	24.40	],
+				                        [	118.29		,	24.60	]
+				                    ]
+				                
+				                ]
+				            ] 
+				        }
+				    }]
+				});
+		    }
+		} 
+
+		myMap = ec.init(document.getElementById('main'));
+        myJqMap = ec.init(document.getElementById('mainJq'));
+        myJlMap = ec.init(document.getElementById('mainJl'));
+        _ZR = myMap.getZrender(); 	 
+        TextShape = require('zrender/shape/Text');
+        LineShape = require('zrender/shape/Line');
+        Polyline = require('zrender/shape/Polyline'); 
+        circleShape=require('zrender/shape/Circle');
+        PolygonShape=require('zrender/shape/Polygon');
+        $("#main").prepend($("#mmap"));
+        loadPolyLine();
+        getmapData();
+        getData();      
+        
+        setTimeout(function(){
+        	//勤务力量分布地图刷新
+            setInterval(function(){
+            	gps=1;
+            	getmapData();
+            },maprefreshTime); 
+          
+          //地图各分局警力数量刷新
+          setInterval(function(){
+        	  gps=1;
+        	  getData();
+          },refreshTime);
+        },1000);
+      
+	});
+    
+    
+	var jqGeoSource=[];
+	var jlGeoSource=[];
+	var heatData = [];
+	var jlData = [];
+	var gps=0;
+	
+	//地图各分局警力数量
+	function getData(){
+		$.post('../warning/jinglimapNum.do',function(data){
+			//区名称、折线坐标
+	    	polyLineList={
+	    	  	    	    'hc':{area:'海沧分局',sum:data.海沧分局,textPoint:[0,470],linePoint:[[225, 470],[175,470]]},
+	    	  	    	    'jm':{area:'集美分局',sum:data.集美分局,textPoint:[0,250],linePoint:[[230,330],[175,250]]},
+	    	  	    	    'ta':{area:'同安分局',sum:data.同安分局,textPoint:[575,55],linePoint:[[490,105],[575,55]]},
+	    	  	    	    'xa':{area:'翔安分局',sum:data.翔安分局,textPoint:[630, 260],linePoint:[[610, 280], [650, 260]]},
+	    	  	    	    'hl':{area:'湖里分局',sum:data.湖里分局,textPoint:[595,575],linePoint:[[450,470],[595,575]]},
+	    	  	    	    'sm':{area:'思明分局',sum:data.思明分局,textPoint:[380,637],linePoint:[[410,550],[430,617]]},
+	    	  	    	    'jc':{area:'机场分局',sum:data.高崎国际机场分局,textPoint:[620,485],linePoint:[[470,460],[620,485]]},
+	    	  	    	    'gj':{area:'公交分局',sum:data.公共交通分局,textPoint:[122,585],linePoint:[[370,540],[280,585]]}
+        	};
+	    	loadPoliceNum();
+		},'json');
+	}
+	
+	//更换地图各分局警力数量
+	var policeNum={};
+	var policeNumSource={};
+	
+	function loadPoliceNum(){
+		for(var key in polyLineList){
+			policeNum[key]=polyLineList[key].sum;
+			if(policeNumSource[key]!=policeNum[key]){
+				policeNumSource[key]=policeNum[key];
+				if(gps==1){
+				$('#'+key).fadeOut(1000);
+				$('#'+key).fadeIn(1000);
+				}
+			}
+			$('#'+key).html(polyLineList[key].sum);
+		}
+	}
+	
+	
+	//地图勤务力量分布
+    function getmapData(){		
+		
+        	//动态请求数据库生成地图
+        	$.post('../warning/jinglimap.do',function(data){
+        	//警情坐标点
+            var jqoldGeo=data.热力警情; 	
+        	var jqnewGeo ={};
+        	for(var i=0;i<jqoldGeo.length;i++){ 
+        		jqnewGeo[i]=[xFormat(jqoldGeo[i].Longitude),yFormat(jqoldGeo[i].Latitude)];
+        	}
+        	
+        	//警力坐标点
+        	var jloldGeo=data.jlgeoCoord;    	
+        	var jlnewGeo ={};
+        	for(var key in jloldGeo){ 
+        		var geo = jloldGeo[key];
+        		jlnewGeo[key]=[xFormat(geo[0]),yFormat(geo[1])];
+        	}
+        	
+        	
+
+	    	for(var key in jqnewGeo){
+	        	heatData.push([
+	        	  jqnewGeo[key][0],
+	        	  jqnewGeo[key][1],
+	        	  //0.01
+	        	  //Math.random()
+	        	  ]);
+	          } 
+	        if(jqGeoSource.length!=heatData.length){
+	      	  jqGeoSource=heatData;
+        	  heatMapLoad(heatData);
+	        }
+	        
+	        jlData=data.警力名字;
+	        if(jlGeoSource.length!=jlData.length){
+	        	jlGeoSource=jlData;
+	        	loadJingLiData(jlnewGeo,jlData);  
+	        }
+	        //loadPoliceNum();
+        },'json');
+	}  
+		
+	
+	
+    //生成警情热力图
+ function heatMapLoad(Geo){
+      option = {
+      series : [
+        {
+            //name: '厦门',
+            type: 'map',
+            mapType: 'xiamen',
+            roam: false,
+            hoverable: false,
+            data:[],
+            heatmap: {
+            	blurSize:20,
+            	opacity:1,
+                minAlpha: 0.25,
+                data: Geo
+            },           
+             itemStyle: {
+                normal: {
+                   borderColor:'rgba(100,149,237,0.6)',
+                    borderWidth:null,
+                    areaStyle: {
+                        color: "rgba(100,149,237,0)"
+                    }
+                }
+            }  
+        }        
+    ]
+};
+      
+    	//显示1秒的刷新效果
+    	myJqMap.clear();
+    	if(gps==1){
+    		setTimeout(function(){
+    	    	myJqMap.setOption(option);
+    	      },1000);
+    	}else if(gps==0){
+    		myJqMap.setOption(option);
+    	}
+}             
+    
+		
+		//显示警力坐标---实名认证
+		function loadJingLiData(geoCoord,jingli){
+				var option = {
+			    series : [
+			        {
+			             type: 'map',
+			            mapType: 'xiamen',
+			            roam: false,
+			            hoverable: false,
+			            data:[], 
+			            itemStyle:{
+			                normal:{
+			                	type:'dotted',
+			                    borderColor:'rgba(100,149,237,0)',
+			                    borderWidth:1,
+			                    areaStyle:{
+			                        color: 'rgba(100,149,237,0)'
+			                    }
+			                }
+			            }, 
+			            geoCoord: geoCoord
+			        },{
+			            type: 'map',
+			            mapType: 'xiamen',
+			            data:[],
+			            markPoint : {
+			                symbol:'Circle',
+			                symbolSize :3,
+			                itemStyle:{
+			                    normal:{
+			                    	 color:'#34D1FE',
+			                        label:{show:false}
+			                    },
+			                    emphasis: {
+			                        label:{position:'top'}
+			                    }
+			                },
+			                data : jingli,
+				            effect:{
+				            	show: false
+				            }
+			            }
+			        },  
+			    ]
+			};
+	       
+			//显示1秒的刷新效果
+	    	myJlMap.clear();
+	    	if(gps==1){
+	    		setTimeout(function(){
+	    			myJlMap.setOption(option);
+	    	      },1000);
+	    	}else if(gps==0){
+	    		myJlMap.setOption(option);
+	    	}
+		};		
+		
+		
+	//一次性绘制区文本及折线
+	function loadPolyLine(){
+		//区名称、折线坐标
+    	var lineList=[
+    	  	    	    {area:'海沧分局',textPoint:[0,470],linePoint:[[225, 470],[180,470]]},
+    	  	    	    {area:'集美分局',textPoint:[0,250],linePoint:[[230,330],[180,250]]},
+    	  	    	    {area:'同安分局',textPoint:[575,55],linePoint:[[490,105],[575,55]]},
+    	  	    	    {area:'翔安分局',textPoint:[630, 260],linePoint:[[610, 280], [637, 260]]},
+    	  	    	    {area:'湖里分局',textPoint:[575,575],linePoint:[[450,470],[575,575]]},
+    	  	    	    {area:'思明分局',textPoint:[380,637],linePoint:[[410,550],[430,617]]},
+    	  	    	    {area:'机场分局',textPoint:[620,485],linePoint:[[470,460],[620,485]]},
+    	  	    	    {area:'公交分局',textPoint:[122,585],linePoint:[[370,540],[290,585]]}
+    	  	    	    ];
+		
+		for(var i=0;i<lineList.length;i++){
+			//多边线箭头指向区
+			_ZR.addShape(new Polyline({
+			    style : {
+			        pointList : lineList[i].linePoint,
+			        strokeColor : '#4f80ff',
+			        lineWidth : 2
+			    }
+			}));
+			
+			//文本 xx区
+	        _ZR.addShape(new TextShape({
+	            style: {
+	                x: lineList[i].textPoint[0]+10,
+	                y: lineList[i].textPoint[1],
+	                brushType: 'fill',
+	                color: '#C4C4CE',
+	                text: lineList[i].area,
+	                textAlign: 'left',
+	                textFont: 'normal 28px 微软雅黑'
+	            },
+	            hoverable:false,
+	        }));
+		}
+	}
+</script>
+		<div id="mainBot">
+			<table id="jltable">
+				<tr id="dyh" >
+					<td style="font-size: 26px;color: #C4C4CE;"></td>
+					<td style="font-size: 26px;color: #C4C4CE;">警力</td>
+					<td style="font-size: 26px;color: #C4C4CE;">在岗</td>
+					<td style="font-size: 26px;color: #C4C4CE;">备勤</td>
+					<td style="font-size: 26px;width:120px;color: #C4C4CE;">单兵设备</td>
+					<td style="font-size: 26px;color: #C4C4CE;">巡逻车</td>
+					<td style="font-size: 26px;color: #C4C4CE;width:105px;">接处警</td>
+					<td style="font-size: 26px;color: #C4C4CE;width:100px;">110在办</td>
+				</tr>
+				<tr id="deh" >
+					<td class="texttd" style="font-size: 26px;color: #C4C4CE;">合计</td>
+					<td id="sumPolice" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumonlinePolice" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumwaitPolice" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumpersonal" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumonlinecar" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumservicerc" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+					<td id="sumll0" class="sum" style="font-size: 32px;color: red;font-weight: bold;"></td>
+				</tr>	
+				
+				<tr id="dsh" class="numDiv">
+					<td class="texttd" id="fenju10" style="font-size: 26px;color: #C4C4CE;"></td>
+					<td id="fenju11"></td>
+					<td id="fenju12"></td>
+					<td id="fenju13"></td>
+					<td id="fenju14"></td>
+					<td id="fenju15"></td>
+					<td id="fenju16"></td>
+					<td id="fenju17"></td>
+				</tr>
+				<tr id="dwh" class="numDiv">
+					<td class="texttd" id="fenju20" style="font-size: 26px;color: #C4C4CE;"></td>
+					<td id="fenju21"></td>
+					<td id="fenju22"></td>
+					<td id="fenju23"></td>
+					<td id="fenju24"></td>
+					<td id="fenju25"></td>
+					<td id="fenju26"></td>
+					<td id="fenju27"></td>
+		
+				</tr>
+				<tr id="dlh" class="numDiv">
+					<td class="texttd" id="fenju30" style="font-size: 26px;color: #C4C4CE;"></td>
+					<td id="fenju31"></td>
+					<td id="fenju32"></td>
+					<td id="fenju33"></td>
+					<td id="fenju34"></td>
+					<td id="fenju35"></td>
+					<td id="fenju36"></td>
+					<td id="fenju37"></td>
+				
+				</tr>
+				<tr id="dqh" class="numDiv">
+					<td class="texttd" id="fenju40" style="font-size: 26px;color: #C4C4CE;"></td>
+					<td id="fenju41"></td>
+					<td id="fenju42"></td>
+					<td id="fenju43"></td>
+					<td id="fenju44"></td>
+					<td id="fenju45"></td>
+					<td id="fenju46"></td>
+					<td id="fenju47"></td>
+				
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript">
+		var mgps=0;
+		
+		jltbldata();
+		setInterval(function(){
+			mgps=1;
+			clearInterval(timer);
+			jltbldata();
+		},refreshTime);
+		var tem=1;
+		var fenjudata;
+		var datatbl;
+		var timer;
+		var sumPolice,sumonlinePolice,sumwaitPolice,sumpersonal,sumonlinecar,sumservicerc,sumll0;
+		function jltbldata(){			
+			$.post('../warning/jinglitbl.do',function(data){
+				datatbl=data;
+				fenjudata=datatbl.fenju;
+				infoShow();
+				timer=setInterval(function(){
+					infoShow();
+				},1000*10);
+			},'json');
+		}
+		
+		//循环展示分局信息
+		function infoShow(){
+			if(sumPolice!=datatbl.sumPolice){
+				sumPolice=datatbl.sumPolice;
+				if(mgps==1){
+				$('#sumPolice').fadeOut(1000);
+				$('#sumPolice').fadeIn(1000);
+				}
+			}
+			if(sumonlinePolice!=datatbl.sumonlinePolice){
+				sumonlinePolice=datatbl.sumonlinePolice;
+				if(mgps==1){
+				$('#sumonlinePolice').fadeOut(1000);
+				$('#sumonlinePolice').fadeIn(1000);
+				}
+			}
+			if(sumwaitPolice!=datatbl.sumwaitPolice){
+				sumwaitPolice=datatbl.sumwaitPolice;
+				if(mgps==1){
+				$('#sumwaitPolice').fadeOut(1000);
+				$('#sumwaitPolice').fadeIn(1000);
+				}
+			}
+			if(sumpersonal!=datatbl.sumpersonal){
+				sumpersonal=datatbl.sumpersonal;
+				if(mgps==1){
+				$('#sumpersonal').fadeOut(1000);
+				$('#sumpersonal').fadeIn(1000);
+				}
+			}
+			if(sumonlinecar!=datatbl.sumonlinecar){
+				sumonlinecar=datatbl.sumonlinecar;
+				if(mgps==1){
+				$('#sumonlinecar').fadeOut(1000);
+				$('#sumonlinecar').fadeIn(1000);
+				}
+			}
+			if(sumservicerc!=datatbl.sumservicerc){
+				sumservicerc=datatbl.sumservicerc;
+				if(mgps==1){
+				$('#sumservicerc').fadeOut(1000);
+				$('#sumservicerc').fadeIn(1000);
+				}
+			}
+			if(sumll0!=datatbl.sumll0){
+				sumll0=datatbl.sumll0;
+				if(mgps==1){
+				$('#sumll0').fadeOut(1000);
+				$('#sumll0').fadeIn(1000);
+				}
+			}
+			document.getElementById('sumPolice').innerHTML=datatbl.sumPolice;
+			document.getElementById('sumonlinePolice').innerHTML=datatbl.sumonlinePolice;
+			document.getElementById('sumwaitPolice').innerHTML=datatbl.sumwaitPolice;
+			document.getElementById('sumpersonal').innerHTML=datatbl.sumpersonal;
+			document.getElementById('sumonlinecar').innerHTML=datatbl.sumonlinecar;
+			document.getElementById('sumservicerc').innerHTML=datatbl.sumservicerc;
+			document.getElementById('sumll0').innerHTML=datatbl.sumll0;
+			
+			for(var i=1;i<5;i++){
+				if(tem==1){
+					for(var j=0;j<8;j++){
+						$('#fenju'+i+j).fadeOut(10);
+						$('#fenju'+i+j).fadeIn(2000);
+						document.getElementById('fenju'+i+j).innerHTML=fenjudata[i-1][j];
+					}
+				}
+				if(tem==2){
+					for(var j=0;j<8;j++){
+						$('#fenju'+i+j).fadeOut(10);
+						$('#fenju'+i+j).fadeIn(2000);
+						document.getElementById('fenju'+i+j).innerHTML=fenjudata[i+3][j];
+					}
+				}
+				
+			}
+				 if(tem==1){
+					tem=2;
+				}else{tem=1;} 
+		}
+		</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>左右无缝滚动</title>
+    <style type="text/css">
+        * {
+            padding: 0px;
+            margin: 0px;
+            font-family: '微软雅黑';
+        }
+
+        #call {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 60px;
+            left: 35px;
+            background: url(../images/jingqing/call.png) no-repeat center center;
+        }
+
+        .box {
+            width: 900px;
+            height: 50px;
+            background: #0B1019;
+            position: relative;
+            overflow: hidden;
+            left: 80px;
+            top: 50px;
+        }
+
+        /* .roll {width:auto;position:absolute;left:0;top:0;overflow:hidden;background:black;}
+        .roll li{width:auto;font-size:28px;height:50px;float:left;font-weight: bold;color:red; overflow:hidden;text-align:center;}   */
+        #contentdiv {
+            width: auto;
+            font-size: 28px;
+            font-weight: bold;
+            font-family: Arial, Helvetica, "宋体";
+            height: 50px;
+            position: absolute;
+            color: red;
+            line-height: 50px;;
+            overflow: hidden;
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+</head>
+<body>
+<div id="call"></div>
+<div class="box">
+    <!-- <ul class="roll" id="rollul">
+       <li id="rollli"></li>
+   </ul>     -->
+    <div id="contentdiv"></div>
+</div>
+<script type="text/javascript">
+    /*var gunData = [{
+     "Name": "翔安分局",
+     "ReceiveDt": "15:51:34",
+     "ReportAddress": "诗坂东二里42号",
+     "typename": "人员报失"
+     }, {"Name": "集美分局", "ReceiveDt": "15:51:34", "ReportAddress": "天马路旺角路口", "typename": "殴打他人"}, {
+     "Name": "海沧分局",
+     "ReceiveDt": "15:51:34",
+     "ReportAddress": "海沧镇兴港路6号兴港六里名湾商务酒店大堂",
+     "typename": "其他（治）"
+     }]*/
+    var gunData = [
+        {"Name": "翔安分局", "ReceiveDt": "10:10:10", "ReportAddress": "诗坂东二里42号", "typename": "人员报失"},
+        {"Name": "集美分局", "ReceiveDt": "11:11:11", "ReportAddress": "天马路旺角路口", "typename": "殴打他人"},
+        {"Name": "海沧分局", "ReceiveDt": "12:12:12", "ReportAddress": "海沧镇兴港路6号兴港六里名湾商务酒店大堂", "typename": "其他（治）"}
+    ]
+    var timer = null;
+    var rollWidth = 0;
+    var contentSource = null;
+    var refreshTime = 31000;
+    $(function () {
+//        refreshTime = getRefreshTime(1, '最近三条警情信息');
+    });
+
+    getWarningInfo();
+    setTimeout(function () {
+        setInterval(function () {
+            //clearInterval(timer);
+            getWarningInfo();
+        }, refreshTime);
+    }, 1000);
+    /* //读取数据库
+     function getWarningInfo(){
+     $.post('../warning/jqgundong.do',function(data){
+     var news1=data[0].ReceiveDt+'&nbsp;'+data[0].ReportAddress+'发生'+data[0].typename;
+     var news2=data[1].ReceiveDt+'&nbsp;'+data[1].ReportAddress+'发生'+data[1].typename;
+     var news3=data[2].ReceiveDt+'&nbsp;'+data[2].ReportAddress+'发生'+data[2].typename;
+     var content=news3+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+     +news2+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+     +news1;
+     var contentTem=news1+news2+news3;
+     if(contentSource!=contentTem){
+     clearInterval(timer);
+     contentSource=contentTem;
+     var contentWidth=(contentTem.length-42)*28+140+360;
+     $('#contentdiv').css("width",contentWidth);
+     rollWidth=contentWidth;
+     $('#contentdiv').html(content);
+     rollInfo();
+     }
+     },'json');
+     } */
+    //获取最新3条警情信息--可配置
+    function getWarningInfo() {
+        var news1 = gunData[0].ReceiveDt + '&nbsp;' + gunData[0].ReportAddress + '发生' + gunData[0].typename;
+        var news2 = gunData[1].ReceiveDt + '&nbsp;' + gunData[1].ReportAddress + '发生' + gunData[1].typename;
+        var news3 = gunData[2].ReceiveDt + '&nbsp;' + gunData[2].ReportAddress + '发生' + gunData[2].typename;
+        var content = news3 + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                + news2 + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                + news1;
+        var contentTem = news1 + news2 + news3;
+        if (contentSource != contentTem) {
+            clearInterval(timer);
+            contentSource = contentTem;
+            var contentWidth = (contentTem.length - 42) * 28 + 140 + 360;
+            $('#contentdiv').css("width", contentWidth);
+            rollWidth = contentWidth;
+            $('#contentdiv').html(content);
+            rollInfo();
+        }
+    }
+
+    function rollInfo() {
+        var num = 0;
+
+        function goLeft() {
+            if (num <= -rollWidth) {
+                num = 900;
+            } else {
+                num -= 2;
+            }
+
+            $("#contentdiv").css({left: num})
+        }
+
+        timer = setInterval(goLeft, 30);
+        /* $(".box").hover(function(){
+         clearInterval(timer);
+         },
+         function(){
+         timer = setInterval(goLeft,30);
+         });  */
+    }
+    ;
+</script>
+
+</body>
+</html>

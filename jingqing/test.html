@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>24小时警情走势</title>
+		<script src="../js/echarts.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: '微软雅黑';
+			}
+			
+			body {
+				height: 302px;
+				overflow: hidden;
+			}
+			
+			.title {
+				height: 35px;
+				margin-left: -10px;
+			}
+			
+			.mtitle {
+				margin-top: 15px;
+				position: absolute;
+				border: 0px solid red;
+				font-size: 32px;
+				font-weight: 700;
+				text-indent: 0em;
+				color: #34D1FE;
+				width: 350px;
+				height: 45px;
+			}
+			
+			.mmeta span {
+				margin: 3px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="title">
+			<div class="mtitle">&nbsp&nbsp24小时警情走势图</div>
+			<div style="position: absolute;margin:45px 0px 0px 18px"><img src="../images/jingqing/titleLine.png"></div>
+		</div>
+		<div id="main" style="border:0px solid red;height:355px;width: 906px;margin: -35px 0px 0px 0px;"></div>
+		<script type="text/javascript">
+			var dataX = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6];
+			/*var data0 = ['-', '-', '-', '-', '-', '-', '-', 25, 15, 15, 16, 30, 19, 12, 22, 17, 29, 17, 11, 5, 9, 9, 5, 3   ];
+			 var data1 = ['-', '-', '-', '-', '-', '-', '-', 10, 15, 8, 17, 10, 12, 9, 3, 7, 4, 1, 5, 3, 1, 3, 3,5];
+			 var data2 = ['-', '-', '-', '-', '-', '-', '-', 7, 7 , 9, 8, 16, 5, 14, 12, 6, 4, 2, 1, 0, 2, 1, 4, 8];
+			 var data3 = ['-', '-', '-', '-', '-', '-', '-', 229, 229, 234, 183, 172, 155, 142, 109, 116, 109, 63, 48, 27, 26, 26, 17, 43];
+			 var data3 = [ 9, 19, 20, 27, 23, 19, 18, 25, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+			 var data4 = [ 7, 6, 13, 9, 16, 10, 17, 10, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+			 var data5 = [ 9, 13, 13, 5, 7, 11, 7, 7, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+			 var data7 = [96, 202, 234, 221, 219, 142, 153, 229, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'];
+			 */
+			// 基于准备好的dom，初始化echarts实例
+			var myChart = echarts.init(document.getElementById('main'));
+
+			// 指定图表的配置项和数据
+			var option = {
+				grid: {
+					top: '25%',
+					left: '5%',
+					bottom: '15%',
+					borderColor: 'rgba(0,0,0,0)'
+				},
+				tooltip: {
+					trigger: 'axis',
+					textStyle: {
+						fontSize: 20
+					},
+					triggerOn: 'click',
+					formatter: function(a) {
+						var relVal = "";
+						/*relVal = "总警情："+a[7].value+"件 </br>";*/
+						relVal += dataName[0] + ":" + a[0].value + "件 </br>";
+						relVal += dataName[1] + ":" + a[2].value + "件 </br>";
+						relVal += dataName[2] + ":" + a[4].value + "件 </br>";
+						return relVal;
+					}
+				},
+				legend: {
+					textStyle: {
+						color: 'rgb(196,196,206)',
+						fontSize: 24
+					},
+					data: [],
+					x: 480,
+					y: 75,
+					selectedMode: false
+				},
+				toolbox: {
+					show: false
+				},
+				calculable: false,
+				xAxis: [{
+
+					nameTextStyle: {
+						color: 'rgb(196,196,206)'
+					},
+					splitLine: {
+						show: false
+					},
+					name: '',
+					axisLabel: {
+						show: true,
+						interval: 0,
+						textStyle: {
+							fontSize: 20,
+							color: 'rgb(196,196,206)'
+						}
+					},
+					type: 'category',
+					boundaryGap: true,
+					splitNumber: 25,
+					data: dataX
+				}],
+				yAxis: [{
+					max: 30,
+					nameTextStyle: {
+						color: 'rgb(196,196,206)'
+					},
+					splitLine: {
+						show: false,
+						lineStyle: {
+							color: ['#0F1A3A'],
+							width: 1,
+							type: 'solid'
+						}
+					},
+					name: '',
+					splitNumber: 6,
+					axisTick: {
+						show: true
+					},
+					axisLabel: {
+						show: true,
+						textStyle: {
+							fontSize: 20,
+							color: 'rgb(196,196,206)'
+						}
+					},
+					type: 'value'
+				}, {
+					max: 30,
+					show: false,
+					name: '',
+					splitNumber: 6,
+					type: 'value'
+				}],
+				series: [{
+					smooth: true,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#ADFF1F',
+							lineStyle: {
+								type: 'solid'
+							}
+						}
+					},
+					data: ''
+				}, {
+					smooth: true,
+					yAxisIndex: 1,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#ADFF1F',
+							lineStyle: {
+								type: 'dashed'
+							}
+						}
+					},
+
+					data: ''
+				}, {
+					smooth: true,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#34D1FE',
+							lineStyle: {
+								type: 'solid'
+							}
+						}
+					},
+
+					data: ''
+				}, {
+					smooth: true,
+					yAxisIndex: 1,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#34D1FE',
+							lineStyle: {
+								type: 'dashed'
+							}
+						}
+					},
+
+					data: ''
+				}, {
+					smooth: true,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#ED7F00',
+							lineStyle: {
+								type: 'solid'
+							}
+						}
+					},
+
+					data: ''
+				}, {
+					smooth: true,
+					yAxisIndex: 1,
+					symbol: 'circle',
+					name: '',
+					type: 'line',
+					itemStyle: {
+						normal: {
+							color: '#ED7F00',
+							lineStyle: {
+								type: 'dashed'
+							}
+						}
+					},
+
+					data: ''
+				}]
+			};
+
+			/*------------------------------------------功能部分----------------------------------------------------------*/
+			var i = 0,
+				j = 0;
+			var X = [50, 80, 110, 150, 180, 210, 240, 270, 310, 340, 370, 400, 440, 470, 510, 540, 570, 600, 630, 660, 690, 720, 760, 790];
+			//今日数据组
+			var data0 = [];
+			var data1 = [];
+			var data2 = [];
+			//昨日数据组
+			var data3 = [];
+			var data4 = [];
+			var data5 = [];
+			//
+			var dataBR = [];
+			var dataZR = [];
+			var dataT1 = [];
+			var dataT2 = [];
+			var dataName = [];
+			var date = new Date();
+			var hour = date.getHours();
+			var lMax = 0;
+			var cMax = [];
+
+			function arrayMax(arrs) {
+				var max = arrs[0];
+				for(var i = 1, ilen = arrs.length; i < ilen; i += 1) {
+					if(arrs[i] > max) {
+						max = arrs[i];
+					}
+				}
+				return max;
+			}
+
+			function checkMax() {
+				cMax[0] = arrayMax(data0);
+				cMax[1] = arrayMax(data1);
+				cMax[2] = arrayMax(data2);
+				cMax[3] = arrayMax(data3);
+				cMax[4] = arrayMax(data4);
+				cMax[5] = arrayMax(data5);
+				lMax = arrayMax(cMax);
+			}
+
+			function check() {
+				var date = new Date();
+				var hour = date.getHours();
+				if(hour > 6 && hour < 24) {
+					//将今日data0-2的当日0-7时的数据拼接在data3-5后面
+					//即可画满当前小时到尾部的数据
+					data3 = data3.concat(data0.slice(0, 7)); //0-6
+					data4 = data4.concat(data1.slice(0, 7));
+					data5 = data5.concat(data2.slice(0, 7));
+					//切割今日数据data0-2的数据只取7点及之后的数据至当前hour时刻
+					data0 = data0.slice(7, hour + 1); //7-hour
+					data1 = data1.slice(7, hour + 1);
+					data2 = data2.slice(7, hour + 1);
+					//切割昨日数据data3-5的数据
+					data3 = data3.slice(7); //7-hour
+					data4 = data4.slice(7);
+					data5 = data5.slice(7);
+					//将data0-2与data3-5在当前时刻的数据对接
+					data3[hour - 7] = data0[hour - 7];
+					data4[hour - 7] = data1[hour - 7];
+					data5[hour - 7] = data2[hour - 7];
+					//将data3-5中根据hour将头几位数据清空
+					for(var k = 0; k < hour - 7; k++) {
+						data3[k] = '-';
+						data4[k] = '-';
+						data5[k] = '-';
+					}
+					if((option.series)[0].data != data0 || (option.series)[2].data != data1 || (option.series)[4].data != data2) {
+						myChart.clear();
+					}
+					(option.series)[0].data = data0;
+					(option.series)[2].data = data1;
+					(option.series)[4].data = data2;
+					(option.series)[1].data = data3;
+					(option.series)[3].data = data4;
+					(option.series)[5].data = data5;
+				}
+				if(hour < 7) {
+					//将昨日数据的头0-6点的数据去除,将今日当前的数据和昨日剩余数据拼装在昨日之后
+					data0 = data3.slice(7).concat(data0.slice(0, hour + 1));
+					data1 = data4.slice(7).concat(data1.slice(0, hour + 1));
+					data2 = data5.slice(7).concat(data2.slice(0, hour + 1));
+					//处理昨日数据,将0-6点放到数组尾部，将开头7位截去
+					data3 = (data3.concat(data3.slice(0, 7))).slice(7);
+					data4 = (data4.concat(data4.slice(0, 7))).slice(7);
+					data5 = (data5.concat(data5.slice(0, 7))).slice(7);
+					//将本时刻之前的昨日数据置空，将本时刻的昨日数据与今日数据对接
+					data3[hour + 17] = data0[hour + 17];
+					data4[hour + 17] = data1[hour + 17];
+					data5[hour + 17] = data2[hour + 17];
+					for(var p = 0; p < hour + 17; p++) {
+						data3[p] = '-';
+						data4[p] = '-';
+						data5[p] = '-';
+					}
+					if((option.series)[0].data != data0 || (option.series)[2].data != data1 || (option.series)[4].data != data2) {
+						myChart.clear();
+					}
+					(option.series)[0].data = data0;
+					(option.series)[2].data = data1;
+					(option.series)[4].data = data2;
+					(option.series)[1].data = data3;
+					(option.series)[3].data = data4;
+					(option.series)[5].data = data5;
+				}
+				checkMax();
+				(option.series)[0].name = dataName[0];
+				(option.series)[2].name = dataName[1];
+				(option.series)[4].name = dataName[2];
+				option.legend.data = dataName;
+
+				option.yAxis[0].max = lMax + 15;
+				option.yAxis[1].max = lMax + 15;
+				myChart.setOption(option);
+			}
+
+			function gotData() {
+				$.post('../demo/24hours.do', function(data) {
+					dataBR = data.rcMap;
+					dataZR = data.rcMap1;
+					for(var key in dataBR) {
+						dataName[i] = key;
+						dataT1[i] = dataBR[key];
+						if(i == 0) {
+							data0 = dataT1[i];
+						}
+						if(i == 1) {
+							data1 = dataT1[i];
+						}
+						if(i == 2) {
+							data2 = dataT1[i];
+						}
+						i++;
+						if(i == 3) {
+							i = 0;
+						}
+					}
+					for(var k in dataZR) {
+						dataT2[j] = dataZR[k];
+						if(j == 0) {
+							data3 = dataT2[j];
+						}
+						if(j == 1) {
+							data4 = dataT2[j];
+						}
+						if(j == 2) {
+							data5 = dataT2[j];
+						}
+						j++;
+						if(j == 3) {
+							j = 0;
+						}
+					}
+				}, "json");
+			}
+			var refreshTime = 30000;
+			$(function() {
+				refreshTime = getRefreshTime(1,'24小时警情走势');
+				gotData();
+				check();
+				if(hour > 6 && hour < 24) {
+					hour = hour - 7;
+				} else if(hour < 7) {
+					hour = hour + 17;
+				}
+				setTimeout(function() {
+					myChart.dispatchAction({ //showTip功能
+						type: 'showTip',
+						x: X[hour],
+						y: 150
+					})
+				}, 1000);
+			});
+			setTimeout(function() {
+				myChart.clear();
+				gotData();
+				check();
+				var date = new Date();
+				var hour = date.getHours();
+				if(hour > 6 && hour < 24) {
+					hour = hour - 7;
+				} else if(hour < 7) {
+					hour = hour + 17;
+				}
+				setTimeout(function() {
+					myChart.dispatchAction({ //showTip功能
+						type: 'showTip',
+						x: X[hour],
+						y: 150
+					})
+				}, 500);
+
+			}, 6000);
+			
+			setInterval(function() {
+				gotData();
+				check();
+				var date = new Date();
+				var hour = date.getHours();
+				if(hour > 6 && hour < 24) {
+					hour = hour - 7;
+				} else if(hour < 7) {
+					hour = hour + 17;
+				}
+				setTimeout(function() {
+					myChart.dispatchAction({ //showTip功能
+						type: 'showTip',
+						x: X[hour],
+						y: 150
+					})
+				}, 500);
+
+			}, refreshTime);
+			/*setInterval(function() {
+			 var t = parseInt(Math.random() * (75 - 25 + 1) + 25);     //治安类随机数
+			 var x = parseInt(Math.random() * (150 - 75 + 1) + 75);   //刑事类随机数
+			 var q = parseInt(Math.random() * 25);   //求助类随机数
+			 if(i<24) {
+			 var Y = 150;
+			 (option.series)[0].data[i]=t;    //治安昨日数据
+			 (option.series)[1].data[i]=t;    //治安今日数据
+			 (option.series)[2].data[i]=x;    //刑事昨日数据
+			 (option.series)[3].data[i]=x;    //刑事今日数据
+			 (option.series)[4].data[i]=q;    //求助昨日数据
+			 (option.series)[5].data[i]=q;    //求助今日数据
+			 //alert(X[i]);
+			 myChart.dispatchAction({
+			 type: 'showTip',
+			 x : X[i],
+			 y : Y
+			 })
+			 setTimeout(function(){
+			 i++;
+			 },100)
+			 } else if(i==24){
+			 for(var j=0;j<24;j++){
+			 (option.series)[1].data[j] = '-';
+			 (option.series)[3].data[j] = '-';
+			 (option.series)[5].data[j] = '-';
+			 }
+			 i=0;
+			 }
+			 myChart.setOption(option);
+			 myChart.refresh();
+			 },1000);*/
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+    <title>ECharts</title>
+    <style type="text/css">
+    	*{margin: 0;padding: 0;font-family: '微软雅黑';}
+    	#main{height:950px;width:1045px;position: absolute;top: 0px;left:20px;}
+    	#legend{height:950px;width:1045px;position: absolute;top: 0px;left:20px;z-index:100;}
+    	#mmap{height:880px;width:1045px;position: absolute;top: 0px;left: 0px;background: url(../images/jingqing/newditu.png) no-repeat center center;}
+  		#temmain{height:950px;width:1045px;position: absolute;top: 0px;left:20px;z-index:10;}
+    	.title{width:350px;height: 47px;position:absolute;top:30px;left:55px;}
+        .mtitle{font-size: 32px;color: #34D1FE;font-weight: bold;top:0px; float: left;background: url(../images/jingqing/titleLine.png)  0px 46px no-repeat;width:350px;height: 47px; }
+   		/* #gif{width:39px;height:40px;position:absolute;left:200px;top:200px;border:0px red solid;background:url(../images/jingqing/hour.gif);z-index:10;} */
+    </style>
+    <script type="text/JavaScript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+</head>
+
+<body>
+    <div class="title">
+        <div class="mtitle">警情热力图</div>
+    </div>
+    <div id="main"></div>
+    <div id="legend"></div>
+    <div id="temmain"></div>
+    <div id="mmap"></div>
+    <!-- <div id="gif"></div> -->
+    <script type="text/javascript">
+    var dx1=118.06628;
+	var dy1=24.53975;
+	var dx2=118.1120;	//true:118.1055     false:118.1145
+	var dy2=24.4670;	//true:24.4530		false:24.4700
+	var kx=0.42;		    //true:0.5		false:0.44
+	var ky=0.33;	    //true:0.35			false:0.33
+    var myMap = null;
+	var achart = null;
+	var _ZR = null;
+	var _ZRLegend=null;
+    var TextShape = null;
+    var LineShape = null;
+    var PolylineShape = null;
+    var circleShape=null;
+    var gps=0;
+    var colorList=['#ADFF1F','#34D1FE','lightgreen','#ED7F00','yellow','#C4C4CE'];
+    
+    var refreshTime =31000;
+    $(function () {
+    	refreshTime = getRefreshTime(1,'警情热力地图');
+    });
+    
+    
+    require.config({
+        paths: {
+            echarts: '../js/echarts-2.2.7/build/dist'
+        }
+    });
+    
+    function xFormat(x){
+		return (x-dx1)*kx+dx2;
+	}
+	function yFormat(y){
+		return (y-dy1)*ky+dy2;
+	}
+
+    require(['echarts', 'echarts/chart/bar', 'echarts/chart/line','echarts/chart/map'], function(ec) {
+		//厦门地图边框
+        require('echarts/util/mapData/params').params.xiamen = {
+		    getGeoJson: function (callback) {
+		        //$.getJSON('xiamen.json',callback);
+		        callback({
+				    "type": "FeatureCollection",
+				    "features": [{
+				        "type": "Feature",
+				        "id": "350203",
+				        "properties": {
+				            "name": "厦门OD",
+				            "cp": [118.087828, 24.462059],
+				            "childNum": 4
+				        },
+				        "geometry": {
+				            "type": "MultiPolygon",
+				            "coordinates": [
+				                [
+				                    [
+				                        [	118.00		,	24.60	],
+				                        [	118.00		,	24.40	],
+				                        [	118.29		,	24.40	],
+				                        [	118.29		,	24.60	]
+				                    ]
+				                
+				                ]
+				            ]
+				        }
+				    }]
+				});
+		    }
+		}
+
+		myMap = ec.init(document.getElementById('main'));
+        mmyMap = ec.init(document.getElementById('mmap'));
+        myTemMap=ec.init(document.getElementById('temmain'));
+        var legendMap=ec.init(document.getElementById('legend'));
+        _ZR = myMap.getZrender(); 	    
+        _ZRLegend=legendMap.getZrender(); 	  
+        TextShape = require('zrender/shape/Text');
+        LineShape = require('zrender/shape/Line');
+        Polyline = require('zrender/shape/Polyline'); 
+        circleShape=require('zrender/shape/Circle');
+        $("#main").prepend($("#mmap"));  
+        textLoad();
+        getData();      
+        //getNewDate();
+        loadPolyLine();
+	});
+		//每隔30s更新一次数据
+		setTimeout(function(){
+			setInterval(function(){
+		    	gps=1;
+		    	getData();
+		    	//getNewDate();
+		    	//loadNum();
+		    	loadPolyLine();
+		    },refreshTime);
+		},1000);
+	    
+		
+		//加载全部事故点
+		var securityList=[],criminalList=[],trafficList=[],hourWarning=[];
+	    function getData(){	    	
+	        	 //动态请求数据库
+	        	$.post('../warning/jqlocation.do',function(data){	
+	        		var oldGeo = data.geoCoord;      
+	        		var circleList=data.circleList;
+		        	var newGeo ={};
+		        	for(var key in oldGeo){ 
+		        		var geo = oldGeo[key];
+		        		newGeo[key]=[xFormat(geo[0]),yFormat(geo[1])];
+		        	}
+		        	/* securityList=data.治安类;
+		        	criminalList=data.刑事类;
+		        	trafficList=data.交通类; */
+		        	
+		        	hourWarning=data.半小时警情;
+		        	loadMapData(newGeo,circleList,hourWarning);	//绘制事故点
+		        	legendShow(circleList);
+	        		//loadMapData(newGeo,securityList,criminalList,trafficList,hourWarning);	//绘制事故点
+		        	//loadMap(newGeo,circleList,hourWarning);
+	        	},'json'); 
+		}  
+	 
+	    
+	   /*  //读取配置表撒点类型
+	    function loadMap(geoCoord,circleList,hourWarning){
+	    	//alert(geoCoord.length+'---'+circleList.length+'----'+hourWarning.length);
+	    	var seriesall=[];
+	    	//全部点类型的地理坐标信息
+	    	var geocoord={
+	            type: 'map',
+	            mapType: 'xiamen',
+	            roam: false,
+	            hoverable: false,
+	            data:[],
+	            itemStyle:{
+	                normal:{
+	                	type:'dotted',
+	                    borderColor:'rgba(100,149,237,0)',
+	                    borderWidth:1,
+	                    areaStyle:{
+	                        color: 'rgba(100,149,237,0)'
+	                    }
+	                }
+	            },
+	            geoCoord: geoCoord
+	        };
+	    	seriesall.push(geocoord);
+	    	
+	    	//动态加载读取到的撒点的类型和数量
+	    	for(var i=0;i<circleList.length;i++){
+	    		var circle={
+		            type: 'map',
+		            mapType: 'xiamen',
+		            data:[],
+		            geoCoord: geoCoord,
+		            
+		            markPoint : {
+		                symbol:'Circle',
+		                symbolSize :3,
+		                itemStyle:{
+		                    normal:{
+		                    	color:colorList[i],
+		                        label:{'show':false}
+		                    },
+		                    emphasis: {
+		                        label:{position:'top'}
+		                    }
+		                },
+		                data :circleList[i],
+			            effect:{
+			            	show: false
+			            }
+		            },
+		            
+		        };
+	    		seriesall.push(circle);
+	    	} 
+	    	
+	    	//加载半小时警情
+	    	var hourqing={
+	            type: 'map',
+	            mapType: 'xiamen',
+	            data:[],
+	            markPoint : {
+	                symbol:'Circle',		//image://../images/jingqing/hour.png	../images/zhian/up.gif
+	                symbolSize :6,
+	                itemStyle:{
+	                    normal:{
+	                     	color:'red',
+	                        label:{'show':false}
+	                    },
+	                    emphasis: {
+	                        label:{'position':'center'}
+	                    }
+	                },
+	                data :hourWarning,
+		            effect:{
+		            	show: true
+		            }
+	            }
+	        };
+	    	seriesall.push(hourqing);
+	    	setInterval(function(){
+	    		//将series加入到option
+		    	var option={series:seriesall};
+		    	//alert(option['series'][2]['type']);
+		    	myMap.setOption(option);
+	    	},1000);
+	    	
+	    }  */
+	   
+		 //绘制交通、治安、刑事点
+		function loadMapData(geoCoord,circleList,hourjq){
+				var option = {
+			    series : [
+			        {
+			            type: 'map',
+			            mapType: 'xiamen',
+			            roam: false,
+			            hoverable: false,
+			            data:[],
+			            itemStyle:{
+			                normal:{
+			                	type:'dotted',
+			                    borderColor:'rgba(100,149,237,0)',
+			                    borderWidth:1,
+			                    areaStyle:{
+			                        color: 'rgba(100,149,237,0)'
+			                    }
+			                }
+			            },
+			            geoCoord: geoCoord
+			        },
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            geoCoord: geoCoord,
+				            
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:colorList[0],			//'#ADFF1F',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[0]!=null?circleList[0].geoList:[],					//zal,
+					            effect:{
+					            	show: false
+					            }
+				            },
+				            
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize : 3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:colorList[1],			//'#34D1FE',	//#ED7F00
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[1]!=null?circleList[1].geoList:[],						//xsl,
+					            effect:{
+					            	show: false
+					            }
+				            }
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                     	 color:colorList[2],			//'lightgreen',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[2]!=null?circleList[2].geoList:[],						//jtl,
+					            effect:{
+					            	show: false
+					            }
+				            }
+				        },
+				        {
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            geoCoord: geoCoord,
+				            
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:colorList[3],			//'#ADFF1F',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[3]!=null?circleList[3].geoList:[],					//zal,
+					            effect:{
+					            	show: false
+					            }
+				            },
+				            
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize : 3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:colorList[4],			//'#34D1FE',	//#ED7F00
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[4]!=null?circleList[4].geoList:[],						//xsl,
+					            effect:{
+					            	show: false
+					            }
+				            }
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                     	 color:colorList[5],			//'lightgreen',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :circleList[5]!=null?circleList[5].geoList:[],						//jtl,
+					            effect:{
+					            	show: false
+					            }
+				            }
+				        },
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',		//image://../images/jingqing/hour.png	../images/zhian/up.gif
+				                symbolSize :6,
+				                itemStyle:{
+				                    normal:{
+				                     	color:'red',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'center'}
+				                    }
+				                },
+				                data :hourjq,
+					            effect:{
+					            	show: true
+					            }
+				            }
+				        },
+			    ]
+			};
+				
+				//setTimeout(function(){
+				   myMap.setOption(option);
+				  //},1000);
+			}; 	
+			
+			
+			/* //加载最近30s内新增加的事故点
+		var securityTemList=[],criminalTemList=[],trafficTemList=[],hourTemWarning=[];
+	    function getNewDate(){	    	
+	        	 //动态请求数据库
+	        	$.post('../warning/jqnewlocation.do',function(data){	
+	        		var oldGeos = data.geoCoord;      	
+		        	var newGeos ={};
+		        	for(var key in oldGeos){ 
+		        		var geo = oldGeos[key];
+		        		newGeos[key]=[xFormat(geo[0]),yFormat(geo[1])];
+		        	}
+		        	securityTemList=data.治安类;
+		        	criminalTemList=data.刑事类;
+		        	trafficTemList=data.交通类;
+		        	//hourTemWarning=data.半小时警情;
+		        	loadNewMapData(newGeos,securityTemList,criminalTemList,trafficTemList);
+	        	},'json'); 
+		}  
+	 
+		//绘制30s新增交通、治安、刑事点
+		function loadNewMapData(geoCoord,zal,xsl,jtl){
+				var option = {
+			    series : [
+			        {
+			            type: 'map',
+			            mapType: 'xiamen',
+			            roam: false,
+			            hoverable: false,
+			            data:[],
+			            itemStyle:{
+			                normal:{
+			                	type:'dotted',
+			                    borderColor:'rgba(100,149,237,0)',
+			                    borderWidth:1,
+			                    areaStyle:{
+			                        color: 'rgba(100,149,237,0)'
+			                    }
+			                }
+			            },
+			            geoCoord: geoCoord
+			        },
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            geoCoord: geoCoord,
+				            
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:'#ADFF1F',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :zal,
+					            effect:{
+					            	show: true
+					            }
+				            },
+				            
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize : 3,
+				                itemStyle:{
+				                    normal:{
+				                    	color:'#ED7F00',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data : xsl,
+					            effect:{
+					            	show: true
+					            }
+				            }
+				        },
+			        
+			        	{
+				            type: 'map',
+				            mapType: 'xiamen',
+				            data:[],
+				            markPoint : {
+				                symbol:'Circle',
+				                symbolSize :3,
+				                itemStyle:{
+				                    normal:{
+				                     	 color:'#34D1FE',
+				                        label:{show:false}
+				                    },
+				                    emphasis: {
+				                        label:{position:'top'}
+				                    }
+				                },
+				                data :jtl,
+					            effect:{
+					            	show: true
+					            }
+				            }
+				        }
+			    ]
+			};
+				myTemMap.clear();
+				myTemMap.setOption(option);
+				setTimeout(function(){
+					myTemMap.clear();
+				  },5000); 
+			};		 */
+			
+			
+			//区警情总量、盗窃数量、抢劫数量及相应的动态上升红色箭头	
+			var warningDivList=new Array();
+		    var stealDivList=new Array();
+		    var defraudDivList=new Array();
+		    var warningMap={};
+		    var stealMap={};
+		    var defraudMap={};
+		    var warningTemMap={};
+		    var stealTemMap={};
+		    var defraudTemMap={};
+		    var warningNumList=[];
+		   
+		    //对改变的警情总量有一个刷新效果
+		    function changeNum(){
+		    	var warningIndex=[];
+		    	for(var i=0;i<warningNumList.length;i++){
+		    		warningMap[i]=warningNumList[i].sum;
+		    		
+		    	}
+		    	//将警情数量有改变的区存起来
+			    	 for(var i=0;i<warningDivList.length;i++){
+			    		 if(warningTemMap[i]!=warningMap[i]){
+			    			 warningIndex.push(i);
+				    		warningTemMap[i]=warningMap[i];
+				    		warningDivList[i].innerHTML=warningMap[i];
+			    		 	warningDivList[i].style.opacity=0;
+			    		 }
+			    	}
+		    	
+		    	//等待1秒后展示出来
+		    	if(gps==1){
+		    	 setTimeout(function(){
+	    		 		for(var n=0;n<warningIndex.length;n++){
+	    		 			warningDivList[warningIndex[n]].style.opacity=1.0;
+	    		 		}
+	    		 	},1000);
+		    	}
+		    	else{
+		    		for(var n=0;n<warningIndex.length;n++){
+    		 			warningDivList[warningIndex[n]].style.opacity=1.0;
+    		 		}
+		    	}
+		    }
+		    
+			function loadPolyLine(){
+				$.post('../warning/jqgfnum.do',function(data){
+				/*  //区文本前图标坐标
+		    	 warningNumList=[
+		    	  	    	    {area:'海沧分局',sum:data.分局.海沧分局?data.分局.海沧分局:0,dqnum:data.今日高发.海沧分局盗窃?data.今日高发.海沧分局盗窃:0,qjnum:data.今日高发.海沧分局抢劫?data.今日高发.海沧分局抢劫:0,szdqnum:data.上周高发.海沧分局盗窃?data.上周高发.海沧分局盗窃:0,szqjnum:data.上周高发.海沧分局抢劫?data.上周高发.海沧分局抢劫:0,textPoint:[25,585],linePoint:[[225, 622],[170,600],[0,600]]},
+		    	  	    	    {area:'集美分局',sum:data.分局.集美分局?data.分局.集美分局:0,dqnum:data.今日高发.集美分局盗窃?data.今日高发.集美分局盗窃:0,qjnum:data.今日高发.集美分局抢劫?data.今日高发.集美分局抢劫:0,szdqnum:data.上周高发.集美分局盗窃?data.上周高发.集美分局盗窃:0,szqjnum:data.上周高发.集美分局抢劫?data.上周高发.集美分局抢劫:0,textPoint:[40,340],linePoint:[[280,430],[195,355],[15,355]]},
+		    	  	    	    {area:'同安分局',sum:data.分局.同安分局?data.分局.同安分局:0,dqnum:data.今日高发.同安分局盗窃?data.今日高发.同安分局盗窃:0,qjnum:data.今日高发.同安分局抢劫?data.今日高发.同安分局抢劫:0,szdqnum:data.上周高发.同安分局盗窃?data.上周高发.同安分局盗窃:0,szqjnum:data.上周高发.同安分局抢劫?data.上周高发.同安分局抢劫:0,textPoint:[730,100],linePoint:[[610,225],[700,115],[840,115]]},
+		    	  	    	    {area:'翔安分局',sum:data.分局.翔安分局?data.分局.翔安分局:0,dqnum:data.今日高发.翔安分局盗窃?data.今日高发.翔安分局盗窃:0,qjnum:data.今日高发.翔安分局抢劫?data.今日高发.翔安分局抢劫:0,szdqnum:data.上周高发.翔安分局盗窃?data.上周高发.翔安分局盗窃:0,szqjnum:data.上周高发.翔安分局抢劫?data.上周高发.翔安分局抢劫:0,textPoint:[835,325],linePoint:[[730, 340], [950, 340]]},
+		    	  	    	    {area:'湖里分局',sum:data.分局.湖里分局?data.分局.湖里分局:0,dqnum:data.今日高发.湖里分局盗窃?data.今日高发.湖里分局盗窃:0,qjnum:data.今日高发.湖里分局抢劫?data.今日高发.湖里分局抢劫:0,szdqnum:data.上周高发.湖里分局盗窃?data.上周高发.湖里分局盗窃:0,szqjnum:data.上周高发.湖里分局抢劫?data.上周高发.湖里分局抢劫:0,textPoint:[730,775],linePoint:[[570,665],[700,790],[840,790]]},
+		    	  	    	    {area:'思明分局',sum:data.分局.思明分局?data.分局.思明分局:0,dqnum:data.今日高发.思明分局盗窃?data.今日高发.思明分局盗窃:0,qjnum:data.今日高发.思明分局抢劫?data.今日高发.思明分局抢劫:0,szdqnum:data.上周高发.思明分局盗窃?data.上周高发.思明分局盗窃:0,szqjnum:data.上周高发.思明分局抢劫?data.上周高发.思明分局抢劫:0,textPoint:[435,870],linePoint:[[500,780],[500,845],[425,845],[580,845]]},
+		    	  	    	    {area:'机场分局',sum:data.分局.高崎国际机场分局?data.分局.高崎国际机场分局:0,dqnum:data.今日高发.高崎国际机场分局盗窃?data.今日高发.高崎国际机场分局盗窃:0,qjnum:data.今日高发.高崎国际机场分局抢劫?data.今日高发.高崎国际机场分局抢劫:0,szdqnum:data.上周高发.高崎国际机场分局盗窃?data.上周高发.高崎国际机场分局盗窃:0,szqjnum:data.上周高发.高崎国际机场分局抢劫?data.上周高发.高崎国际机场分局抢劫:0,textPoint:[715,650],linePoint:[[520,610],[685,665],[845,665]]},
+		    	  	    	    {area:'公交分局',sum:data.分局.公共交通分局?data.分局.公共交通分局:0,dqnum:data.今日高发.公共交通分局盗窃?data.今日高发.公共交通分局盗窃:0,qjnum:data.今日高发.公共交通分局抢劫?data.今日高发.公共交通分局抢劫:0,szdqnum:data.上周高发.公共交通分局盗窃?data.上周高发.公共交通分局盗窃:0,szqjnum:data.上周高发.公共交通分局抢劫?data.上周高发.公共交通分局抢劫:0,textPoint:[212,800],linePoint:[[440,730],[352,815],[182,815]]}
+		    	  	    	    ];  */
+		    	
+		    
+		    	    var hcname=data.今日高发.hc;
+		    	  	var jmname=data.今日高发.jm;
+		    	  	var taname=data.今日高发.ta;
+		    	  	var xaname=data.今日高发.xa;
+		    	  	var hlname=data.今日高发.hl;
+		    	  	var smname=data.今日高发.sm;
+		    	  	var jcname=data.今日高发.jc;
+		    	  	var gjname=data.今日高发.gj;
+		    	  	
+		    	  	var hcNum=data.今日高发.hcNum;
+		    	  	var jmNum=data.今日高发.jmNum;
+		    	  	var taNum=data.今日高发.taNum;
+		    	  	var xaNum=data.今日高发.xaNum;
+		    	  	var hlNum=data.今日高发.hlNum;
+		    	  	var smNum=data.今日高发.smNum;
+		    	  	var jcNum=data.今日高发.jcNum;
+		    	  	var gjNum=data.今日高发.gjNum;
+		    	  	
+		    	  	
+		    	  	var szhcNum=data.上周高发.szhcNum;
+		    	  	var szjmNum=data.上周高发.szjmNum;
+		    	  	var sztaNum=data.上周高发.sztaNum;
+		    	  	var szxaNum=data.上周高发.szxaNum;
+		    	  	var szhlNum=data.上周高发.szhlNum;
+		    	  	var szsmNum=data.上周高发.szsmNum;
+		    	  	var szjcNum=data.上周高发.szjcNum;
+		    	  	var szgjNum=data.上周高发.szgjNum;
+		    	  	
+		    	  	//alert('今日:'+hlNum+'==='+'上周均值:'+szhlNum);
+		    	  	 //区文本前图标坐标
+			    	 warningNumList=[
+			    	  	    	    {area:'海沧分局',name:hcname,sum:data.分局.海沧分局?data.分局.海沧分局:0,num:hcNum,sznum:szhcNum,textPoint:[25,585],linePoint:[[225, 622],[170,600],[0,600]]},
+			    	  	    	    {area:'集美分局',name:jmname,sum:data.分局.集美分局?data.分局.集美分局:0,num:jmNum,sznum:szjmNum,textPoint:[40,340],linePoint:[[280,430],[195,355],[15,355]]},
+			    	  	    	    {area:'同安分局',name:taname,sum:data.分局.同安分局?data.分局.同安分局:0,num:taNum,sznum:sztaNum,textPoint:[730,100],linePoint:[[610,225],[700,115],[840,115]]},
+			    	  	    	    {area:'翔安分局',name:xaname,sum:data.分局.翔安分局?data.分局.翔安分局:0,num:xaNum,sznum:szxaNum,textPoint:[835,325],linePoint:[[730, 340], [950, 340]]},
+			    	  	    	    {area:'湖里分局',name:hlname,sum:data.分局.湖里分局?data.分局.湖里分局:0,num:hlNum,sznum:szhlNum,textPoint:[730,775],linePoint:[[570,665],[700,790],[840,790]]},
+			    	  	    	    {area:'思明分局',name:smname,sum:data.分局.思明分局?data.分局.思明分局:0,num:smNum,sznum:szsmNum,textPoint:[435,870],linePoint:[[500,780],[500,845],[425,845],[580,845]]},
+			    	  	    	    {area:'机场分局',name:jcname,sum:data.分局.高崎国际机场分局?data.分局.高崎国际机场分局:0,num:jcNum,sznum:szjcNum,textPoint:[715,650],linePoint:[[520,610],[685,665],[845,665]]},
+			    	  	    	    {area:'公交分局',name:gjname,sum:data.分局.公共交通分局?data.分局.公共交通分局:0,num:gjNum,sznum:szgjNum,textPoint:[212,800],linePoint:[[440,730],[352,815],[182,815]]}
+			    	  	    	    ];   	  
+		    	  
+		    	  	/*  //区文本前图标坐标
+			    	 warningNumList=[
+			    	  	    	    {area:'海沧分局',dqname:hcname[0]?hcname[0]:'',qjname:hcname[1]?hcname[1]:'',sum:data.分局.海沧分局?data.分局.海沧分局:0,dqnum:data.今日高发.hcNum[0]?data.今日高发.hcNum[0]:0,qjnum:data.今日高发.hcNum[1]?data.今日高发.hcNum[1]:0,szdqnum:data.上周高发.szhcNum[0]?data.上周高发.szhcNum[0]:0,szqjnum:data.上周高发.szhcNum[1]?data.上周高发.szhcNum[1]:0,textPoint:[25,585],linePoint:[[225, 622],[170,600],[0,600]]},
+			    	  	    	    {area:'集美分局',dqname:jmname[0]?jmname[0]:'',qjname:jmname[1]?jmname[1]:'',sum:data.分局.集美分局?data.分局.集美分局:0,dqnum:data.今日高发.jmNum[0]?data.今日高发.jmNum[0]:0,qjnum:data.今日高发.jmNum[1]?data.今日高发.jmNum[1]:0,szdqnum:data.上周高发.szjmNum[0]?data.上周高发.szjmNum[0]:0,szqjnum:data.上周高发.szjmNum[1]?data.上周高发.szjmNum[1]:0,textPoint:[40,340],linePoint:[[280,430],[195,355],[15,355]]},
+			    	  	    	    {area:'同安分局',dqname:taname[0]?taname[0]:'',qjname:taname[1]?taname[1]:'',sum:data.分局.同安分局?data.分局.同安分局:0,dqnum:data.今日高发.taNum[0]?data.今日高发.taNum[0]:0,qjnum:data.今日高发.taNum[1]?data.今日高发.taNum[1]:0,szdqnum:data.上周高发.sztaNum[0]?data.上周高发.sztaNum[0]:0,szqjnum:data.上周高发.sztaNum[1]?data.上周高发.sztaNum[1]:0,textPoint:[730,100],linePoint:[[610,225],[700,115],[840,115]]},
+			    	  	    	    {area:'翔安分局',dqname:xaname[0]?xaname[0]:'',qjname:xaname[1]?xaname[1]:'',sum:data.分局.翔安分局?data.分局.翔安分局:0,dqnum:data.今日高发.xaNum[0]?data.今日高发.xaNum[0]:0,qjnum:data.今日高发.xaNum[1]?data.今日高发.xaNum[1]:0,szdqnum:data.上周高发.szxaNum[0]?data.上周高发.szxaNum[0]:0,szqjnum:data.上周高发.szxaNum[1]?data.上周高发.szxaNum[1]:0,textPoint:[835,325],linePoint:[[730, 340], [950, 340]]},
+			    	  	    	    {area:'湖里分局',dqname:hlname[0]?hlname[0]:'',qjname:hlname[1]?hlname[1]:'',sum:data.分局.湖里分局?data.分局.湖里分局:0,dqnum:data.今日高发.hlNum[0]?data.今日高发.hlNum[0]:0,qjnum:data.今日高发.hlNum[1]?data.今日高发.hlNum[1]:0,szdqnum:data.上周高发.szhlNum[0]?data.上周高发.szhlNum[0]:0,szqjnum:data.上周高发.szhlNum[1]?data.上周高发.szhlNum[1]:0,textPoint:[730,775],linePoint:[[570,665],[700,790],[840,790]]},
+			    	  	    	    {area:'思明分局',dqname:smname[0]?smname[0]:'',qjname:smname[1]?smname[1]:'',sum:data.分局.思明分局?data.分局.思明分局:0,dqnum:data.今日高发.smNum[0]?data.今日高发.smNum[0]:0,qjnum:data.今日高发.smNum[1]?data.今日高发.smNum[1]:0,szdqnum:data.上周高发.szsmNum[0]?data.上周高发.szsmNum[0]:0,szqjnum:data.上周高发.szsmNum[1]?data.上周高发.szsmNum[1]:0,textPoint:[435,870],linePoint:[[500,780],[500,845],[425,845],[580,845]]},
+			    	  	    	    {area:'机场分局',dqname:jcname[0]?jcname[0]:'',qjname:jcname[1]?jcname[1]:'',sum:data.分局.高崎国际机场分局?data.分局.高崎国际机场分局:0,dqnum:data.今日高发.jcNum[0]?data.今日高发.jcNum[0]:0,qjnum:data.今日高发.jcNum[1]?data.今日高发.jcNum[1]:0,szdqnum:data.上周高发.szjcNum[0]?data.上周高发.szjcNum[0]:0,szqjnum:data.上周高发.szjcNum[1]?data.上周高发.szjcNum[1]:0,textPoint:[715,650],linePoint:[[520,610],[685,665],[845,665]]},
+			    	  	    	    {area:'公交分局',sum:data.分局.公共交通分局?data.分局.公共交通分局:0,dqnum:data.今日高发.gjNum[0]?data.今日高发.gjNum[0]:0,qjnum:data.今日高发.gjNum[1]?data.今日高发.gjNum[1]:0,szdqnum:data.上周高发.szgjNum[0]?data.上周高发.szgjNum[0]:0,szqjnum:data.上周高发.szgjNum[1]?data.上周高发.szgjNum[1]:0,textPoint:[212,800],linePoint:[[440,730],[352,815],[182,815]]}
+			    	  	    	    ];   	 */     
+ 	  	    	   /* //区文本前图标坐标
+ 			    	 warningNumList=[
+ 			    	  	    	    {area:'海沧分局',sum:data.分局.海沧分局?data.分局.海沧分局:0,dqnum:data.今日高发.hcNum[0]?data.今日高发.hcNum[0]:0,qjnum:data.今日高发.hcNum[1]?data.今日高发.hcNum[1]:0,szdqnum:data.上周高发.szhcNum[0]?data.上周高发.szhcNum[0]:0,szqjnum:data.上周高发.szhcNum[1]?data.上周高发.szhcNum[1]:0,textPoint:[25,585],linePoint:[[225, 622],[170,600],[0,600]]},
+ 			    	  	    	    {area:'集美分局',sum:data.分局.集美分局?data.分局.集美分局:0,dqnum:data.今日高发.jmNum[0]?data.今日高发.jmNum[0]:0,qjnum:data.今日高发.jmNum[1]?data.今日高发.jmNum[1]:0,szdqnum:data.上周高发.szjmNum[0]?data.上周高发.szjmNum[0]:0,szqjnum:data.上周高发.szjmNum[1]?data.上周高发.szjmNum[1]:0,textPoint:[40,340],linePoint:[[280,430],[195,355],[15,355]]},
+ 			    	  	    	    {area:'同安分局',sum:data.分局.同安分局?data.分局.同安分局:0,dqnum:data.今日高发.taNum[0]?data.今日高发.taNum[0]:0,qjnum:data.今日高发.taNum[1]?data.今日高发.taNum[1]:0,szdqnum:data.上周高发.sztaNum[0]?data.上周高发.sztaNum[0]:0,szqjnum:data.上周高发.sztaNum[1]?data.上周高发.sztaNum[1]:0,textPoint:[730,100],linePoint:[[610,225],[700,115],[840,115]]},
+ 			    	  	    	    {area:'翔安分局',sum:data.分局.翔安分局?data.分局.翔安分局:0,dqnum:data.今日高发.xaNum[0]?data.今日高发.xaNum[0]:0,qjnum:data.今日高发.xaNum[1]?data.今日高发.xaNum[1]:0,szdqnum:data.上周高发.szxaNum[0]?data.上周高发.szxaNum[0]:0,szqjnum:data.上周高发.szxaNum[1]?data.上周高发.szxaNum[1]:0,textPoint:[835,325],linePoint:[[730, 340], [950, 340]]},
+ 			    	  	    	    {area:'湖里分局',sum:data.分局.湖里分局?data.分局.湖里分局:0,dqnum:data.今日高发.hlNum[0]?data.今日高发.hlNum[0]:0,qjnum:data.今日高发.hlNum[1]?data.今日高发.hlNum[1]:0,szdqnum:data.上周高发.szhlNum[0]?data.上周高发.szhlNum[0]:0,szqjnum:data.上周高发.szhlNum[1]?data.上周高发.szhlNum[1]:0,textPoint:[730,775],linePoint:[[570,665],[700,790],[840,790]]},
+ 			    	  	    	    {area:'思明分局',sum:data.分局.思明分局?data.分局.思明分局:0,dqnum:data.今日高发.smNum[0]?data.今日高发.smNum[0]:0,qjnum:data.今日高发.smNum[1]?data.今日高发.smNum[1]:0,szdqnum:data.上周高发.szsmNum[0]?data.上周高发.szsmNum[0]:0,szqjnum:data.上周高发.szsmNum[1]?data.上周高发.szsmNum[1]:0,textPoint:[435,870],linePoint:[[500,780],[500,845],[425,845],[580,845]]},
+ 			    	  	    	    {area:'机场分局',sum:data.分局.高崎国际机场分局?data.分局.高崎国际机场分局:0,dqnum:data.今日高发.jcNum[0]?data.今日高发.jcNum[0]:0,qjnum:data.今日高发.jcNum[1]?data.今日高发.jcNum[1]:0,szdqnum:data.上周高发.szjcNum[0]?data.上周高发.szjcNum[0]:0,szqjnum:data.上周高发.szjcNum[1]?data.上周高发.szjcNum[1]:0,textPoint:[715,650],linePoint:[[520,610],[685,665],[845,665]]},
+ 			    	  	    	    {area:'公交分局',sum:data.分局.公共交通分局?data.分局.公共交通分局:0,dqnum:data.今日高发.gjNum[0]?data.今日高发.gjNum[0]:0,qjnum:data.今日高发.gjNum[1]?data.今日高发.gjNum[1]:0,szdqnum:data.上周高发.szgjNum[0]?data.上周高发.szgjNum[0]:0,szqjnum:data.上周高发.szgjNum[1]?data.上周高发.szgjNum[1]:0,textPoint:[212,800],linePoint:[[440,730],[352,815],[182,815]]}
+ 			    	  	    	    ];   	     */
+ 	    	    
+		    $('#mmap').empty();
+	    	for(var i=0;i<warningNumList.length;i++)
+	    		{
+	    		
+	    		/* var dqnum=warningNumList[i].num[0]?warningNumList[i].num[0]:0;
+	    		var qjnum=warningNumList[i].num[1]?warningNumList[i].num[1]:0;
+	    		var szdqnum=warningNumList[i].sznum[0]?warningNumList[i].sznum[0]:0;
+	    		var szqjnum=warningNumList[i].sznum[1]?warningNumList[i].sznum[1]:0;
+	    		var dqname=warningNumList[i].name[0]?warningNumList[i].name[0]:'';
+	    		var qjname=warningNumList[i].name[1]?warningNumList[i].name[1]:'';
+	    		alert(dqnum+'--'+dqname); */
+	    		/* warningMap[i]=warningNumList[i].sum;
+	    		stealMap[i]=warningNumList[i].dqnum;
+	    		defraudMap[i]=warningNumList[i].qjnum; */
+	    		
+	    			//警情总量
+		    		var sumdiv=document.createElement("div");
+		    		sumdiv.style.left= warningNumList[i].textPoint[0]+87+"px";       
+		    		sumdiv.style.top=warningNumList[i].textPoint[1]-27+"px";
+		    		sumdiv.style.position="absolute";
+		    		sumdiv.style.color="#ED7F00";
+		    		sumdiv.style.fontSize="32px"; 
+		    		sumdiv.style.fontWeight="bold";
+		    		sumdiv.id="warningId"+i;
+		    		//sumdiv.innerHTML=null;
+		    		//sumdiv.innerHTML=null;
+		    		sumdiv.innerHTML=warningNumList[i].sum;
+		    		warningDivList.push(sumdiv);
+		    		//sumdiv.style.background="url(../images/jingqing/01.png)";
+		    		document.getElementById('mmap').appendChild(sumdiv);
+	    		//}
+	    	
+	    		var highname1='';
+	    		var highname2='';
+	    		var highnum1=0;
+	    		var highnum2=0;
+	    		var highsznum1=0;
+	    		var highsznum2=0;
+	    		var highname=warningNumList[i].name;
+	    		var highnum=warningNumList[i].num;
+	    		var highsznum=warningNumList[i].sznum;
+	    		
+	    		var highname1=highname[0]!=null?highname[0]:'';
+	    		var highname2=highname[1]!=null?highname[1]:'';
+	    		var highnum1=highnum[0]!=null?highnum[0]:0;
+	    		var highnum2=highnum[1]!=null?highnum[1]:0;
+	    		
+	    		//名称
+	    		if(highname!=null){
+		    		if(highname.length==1){
+		    			highname1=highname[0];
+		    		}
+		    		else if(highname.length==2){
+		    			highname1=highname[0];
+		    			highname2=highname[1];
+		    		}
+		    	}
+	    		//今日数量
+	    		if(highnum!=null){
+		    		if(highnum.length==1){
+		    			highnum1=highnum[0];
+		    		}
+		    		else if(highnum.length==2){
+		    			highnum1=highnum[0];
+		    			highnum2=highnum[1];
+		    		}
+		    	}
+	    		//上周数量
+		    	if(highsznum!=null){
+		    		if(highsznum.length==1){
+		    			highsznum1=highsznum[0];
+		    		}
+		    		else if(highsznum.length==2){
+		    			highsznum1=highsznum[0];
+		    			highsznum2=highsznum[1];
+		    		}
+		    	}
+	    		
+	    		//高发案件2
+	    		if(highnum1>0){
+	    			//名称
+		    		 _ZR.addShape(new TextShape({
+			            style: {
+			                x: warningNumList[i].textPoint[0]-25,
+			                y: warningNumList[i].textPoint[1]+38,
+			                brushType: 'fill',
+			                color: '#C4C4CE',
+			                text:highname1, 			//'盗窃',
+			                textAlign: 'left',
+			                textFont: 'normal 25px 微软雅黑'
+			            },
+			            hoverable:false,
+			        }));
+		    		 
+		    		//数量
+	    		    var sumdiv2=document.createElement("div");
+		    		sumdiv2.style.left= warningNumList[i].textPoint[0]+27+"px"; 
+		    		sumdiv2.style.top=warningNumList[i].textPoint[1]+22+"px";
+		    		sumdiv2.style.position="absolute";
+		    		sumdiv2.style.color="#9AE421";
+		    		sumdiv2.style.fontSize="25px";
+		    		sumdiv2.style.fontWeight="bold";
+		    		sumdiv2.innerHTML=highnum1;
+		    		stealDivList.push(sumdiv2);
+		    		document.getElementById('mmap').appendChild(sumdiv2); 
+	    		}
+	    		
+	    		
+	    		//高发案件2
+		    	if(highnum2>0){
+		    		//名称
+		    		_ZR.addShape(new TextShape({
+			            style: {
+			                x: warningNumList[i].textPoint[0]+75,
+			                y: warningNumList[i].textPoint[1]+38,
+			                brushType: 'fill',
+			                color: '#C4C4CE',
+			                text:highname2,  			//'抢劫',
+			                textAlign: 'left',
+			                textFont: 'normal 25px 微软雅黑'
+			            },
+			            hoverable:false,
+			        })); 
+		    		
+		    		//数量
+		    		var sumdiv18=document.createElement("div");
+		    		sumdiv18.style.left= warningNumList[i].textPoint[0]+126+"px";       
+		    		sumdiv18.style.top=warningNumList[i].textPoint[1]+22+"px";
+		    		sumdiv18.style.position="absolute";
+		    		sumdiv18.style.color="#9AE421";
+		    		sumdiv18.style.fontSize="25px";
+		    		sumdiv18.style.fontWeight="bold";
+		    		sumdiv18.innerHTML=highnum2;
+		    		defraudDivList.push(sumdiv18);
+		    		document.getElementById('mmap').appendChild(sumdiv18);
+		    	}
+		    		
+	    		/* //盗窃数量
+	    		if(warningNumList[i].dqnum>0){
+		    		var sumdiv2=document.createElement("div");
+		    		sumdiv2.style.left= warningNumList[i].textPoint[0]+27+"px"; 
+		    		sumdiv2.style.top=warningNumList[i].textPoint[1]+22+"px";
+		    		sumdiv2.style.position="absolute";
+		    		//sumdiv2.style.width="25px";
+		    		//sumdiv2.style.height="25px";
+		    		sumdiv2.style.color="#9AE421";
+		    		//sumdiv2.style.textalign="left";
+		    		//sumdiv2.style.lineheight="25px";
+		    		sumdiv2.style.fontSize="25px";
+		    		sumdiv2.style.fontWeight="bold";
+		    		//sumdiv.innerHTML=null;
+		    		sumdiv2.innerHTML=warningNumList[i].dqnum;
+		    		stealDivList.push(sumdiv2);
+		    		//sumdiv2.style.background="url(../images/jingqing/01.png)";
+		    		document.getElementById('mmap').appendChild(sumdiv2); 
+	    		}
+		    	 //抢劫数量
+		    	 if(warningNumList[i].qjnum>0){
+		    		var sumdiv18=document.createElement("div");
+		    		sumdiv18.style.left= warningNumList[i].textPoint[0]+126+"px";       
+		    		sumdiv18.style.top=warningNumList[i].textPoint[1]+22+"px";
+		    		sumdiv18.style.position="absolute";
+		    		//sumdiv18.style.width="25px";
+		    		//sumdiv18.style.height="25px";
+		    		sumdiv18.style.color="#9AE421";
+		    		//sumdiv18.style.textalign="left";
+		    		//sumdiv18.style.lineheight="25px";
+		    		sumdiv18.style.fontSize="25px";
+		    		sumdiv18.style.fontWeight="bold";
+		    		//sumdiv.innerHTML=null;
+		    		sumdiv18.innerHTML=warningNumList[i].qjnum;
+		    		defraudDivList.push(sumdiv18);
+		    		//sumdiv18.style.background="url(../images/jingqing/01.png)";
+		    		document.getElementById('mmap').appendChild(sumdiv18);
+		    	 } */
+	    		
+		        //高发案件1上升小图标
+		        if(highnum1>highsznum1){
+		    	    var divmap0=document.createElement("div");
+		    	    if(highnum1>=10){
+		    		divmap0.style.left=warningNumList[i].textPoint[0]+62+"px";
+		    	    }else{
+		    	    divmap0.style.left=warningNumList[i].textPoint[0]+47+"px";
+		    	    }
+		    		divmap0.style.top=warningNumList[i].textPoint[1]+29+"px";
+		    		divmap0.style.position="absolute";
+		    		divmap0.style.width="12px";
+		    		divmap0.style.height="20px";
+		    		divmap0.style.background="url(../images/jingqing/up.gif)";
+		    		document.getElementById('mmap').appendChild(divmap0);
+		        }
+		    		
+		      //高发案件2上升小图标
+		         if(highnum2>highsznum2){
+		    	    var divmap0=document.createElement("div");
+		    	    if(highnum2>=10){
+		    		divmap0.style.left=warningNumList[i].textPoint[0]+162+"px";
+		    	    }else{
+		    	    divmap0.style.left=warningNumList[i].textPoint[0]+146+"px";
+		    	    }
+		    		divmap0.style.top=warningNumList[i].textPoint[1]+29+"px";
+		    		divmap0.style.position="absolute";
+		    		divmap0.style.width="12px";
+		    		divmap0.style.height="20px";
+		    		divmap0.style.background="url(../images/jingqing/up.gif";
+		    		document.getElementById('mmap').appendChild(divmap0);
+		        }
+	    	}
+			//setTimeout('changeNum();',1000);
+			changeNum();
+			},'json');
+		}  				
+		
+			//绘制区名称及折线
+			function textLoad(){
+					//区名称及折线坐标
+			    	var polyLineList=[
+		    	  	    	    {area:'海沧分局',textPoint:[25,585],linePoint:[[225, 622],[170,600],[0,600]]},
+		    	  	    	    {area:'集美分局',textPoint:[40,340],linePoint:[[280,430],[195,355],[15,355]]},
+		    	  	    	    {area:'同安分局',textPoint:[730,100],linePoint:[[610,225],[700,115],[880,115]]},
+		    	  	    	    {area:'翔安分局',textPoint:[835,325],linePoint:[[730, 340], [980, 340]]},
+		    	  	    	    {area:'湖里分局',textPoint:[730,775],linePoint:[[570,665],[700,790],[880,790]]},
+		    	  	    	    {area:'思明分局',textPoint:[435,870],linePoint:[[500,780],[500,845],[405,845],[600,845]]},
+		    	  	    	    {area:'机场分局',textPoint:[715,650],linePoint:[[520,610],[685,665],[855,665]]},
+		    	  	    	    {area:'公交分局',textPoint:[212,800],linePoint:[[440,730],[352,815],[182,815]]}
+		    	  	    	    ];
+					
+				for(var i=0;i<polyLineList.length;i++){
+					//折线
+		    		_ZR.addShape(new Polyline({
+		    		    style : {
+		    		        pointList : polyLineList[i].linePoint,
+		    		        strokeColor : '#4f80ff',
+		    		        lineWidth : 2
+		    		    }
+		    		}));
+					
+		    		//区名称
+			        _ZR.addShape(new TextShape({
+			            style: {
+			                x: polyLineList[i].textPoint[0]-25,
+			                y: polyLineList[i].textPoint[1]-7,
+			                brushType: 'fill',
+			                color: '#C4C4CE',
+			                text: polyLineList[i].area,
+			                textAlign: 'left',
+			                textFont: 'normal 28px 微软雅黑'
+			            },
+			            hoverable:false,
+			        }));
+				}	
+			}
+			
+			
+		//绘制图例
+		function legendShow(circleList){
+			    _ZRLegend.clear();
+		    	var textTL;  	
+		    		textTL=[
+		    	            {textPoint:[860,870]},
+		    	            {textPoint:[860,905]},	//#ED7F00
+		    	            {textPoint:[860,940]},	//#34D1FE
+		    	            {textPoint:[760,870]},
+		    	            {textPoint:[760,905]},	//#ED7F00
+		    	            {textPoint:[760,940]},	//#34D1FE
+		    	            ];
+		    	  	for(var i=0;i<circleList.length;i++)
+		    		{
+		    	  	//图例文本
+		    		_ZRLegend.addShape(new TextShape({
+			            style: {
+			                x: textTL[i].textPoint[0]+15,
+			                y: textTL[i].textPoint[1],
+			                brushType: 'fill',
+			                color:'#C4C4CE', 			//,colorList[i]
+			                text:circleList[i].circleName, 			
+			                //text:'刑事类',
+			                textAlign: 'left',
+			                textFont: 'normal 20px 微软雅黑'
+			            },
+			            hoverable:false,
+			        }));		    	
+		    	  	
+		    	//图例三个圆形图标   	
+		    		_ZRLegend.addShape(new circleShape({
+		        		style:{
+		        			x:textTL[i].textPoint[0],
+		        		    y:textTL[i].textPoint[1],
+		        		    r:4,
+		        		    color:colorList[i],			//textTL[i].color
+		        		}
+		        	}));
+		    	}
+		    	//alert('dddd');
+		}
+    </script>
+</body>

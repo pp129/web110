@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+    <title>ECharts</title>
+    <style type="text/css"> 
+    #infordiv{width:860px;height:225px;position:absolute;left:0px;top:0px;float:left;overfolw:hidden;background: url(../images/jingqing/bj1.png) no-repeat center center;}
+    #infor{width:800px; height:170px;position:absolute;left:35px;top:30px;}
+    #jrjq{width:120px;height:37px;text-align:left;line-height:37px;left:20px;top:8px;position:absolute;font-size: 22px;color: #C4C4CE;font-weight: bold;overflow:hidden;}
+    #jrjqsum{width:120px;height:47px;text-align:left;line-height:47px;left:20px;top:45px;position:absolute;font-size:34px;color:#ED7F00;font-weight:bold;overflow:hidden;}
+    #bzzjq{width:85px;height:30px;text-align:left;line-height:30px;left:20px;top:95px;position:absolute;font-size: 16px;color: #C4C4CE;font-weight: bold;overflow:hidden;}
+    #bzzjqsum{width:80px;height:30px;text-align:left;line-height:30px;left:112px;top:95px;position:absolute;font-size:20px;color:#ED7F00;font-weight:bold;overflow:hidden;}  
+    #szzjq{width:85px;height:30px;text-align:left;line-height:30px;left:20px;top:125px;position:absolute;font-size: 16px;color: #C4C4CE;font-weight: bold;overflow:hidden;}
+    #szzjqsum{width:80px;height:30px;text-align:left;line-height:30px;left:112px;top:125px;position:absolute;font-size:20px;color:#ED7F00;font-weight:bold;overflow:hidden;}   
+    .gfaj{width:150px;height:100%;position:absolute;flow:left;}
+    #gfaj1{left:225px;}
+    #gfaj2{left:405px;}
+    #gfaj3{left:585px;}
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/zrender-2.1.0/src/zrender.js"></script>
+</head>
+<body>
+	<!-- <div id="linediv"></div>  -->	
+		<!-- <div class=infor id="infor1">2016年3月12日10:56     软件园南区东南拐角处发生诈骗</div>
+		<div class=infor id="infor2">2016年3月11日15:45     厦门市图书馆西北侧发生抢劫</div>
+		<div class=infor id="infor3">2016年3月11日15:35     蔡塘广场东南拐角处发生抢劫</div>
+		<div class=infor id="infor4">2016年3月10日09:32     厦门市图书馆西北侧发生抢劫</div>
+		<div class=infor id="infor5">2016年3月10日08:30     蔡塘广场东南拐角处发生抢劫</div>   -->		
+		<!-- <div class=infor id="infor1"></div>
+		<div class=infor id="infor2"></div>
+		<div class=infor id="infor3"></div>
+		<div class=infor id="infor4"></div>
+		<div class=infor id="infor5"></div>  -->
+		
+		
+		<div id="infordiv">
+		<!-- 需求改变2016/8/2 -->
+		<div id="infor">
+			<div id="jrjq">今日总警情</div>
+			<div id="jrjqsum">81</div>
+			<div id="bzzjq">本周总警情</div>
+			<div id="bzzjqsum">356</div>
+			<div id="szzjq">上周总警情</div>
+			<div id="szzjqsum">4937</div>
+			<div id="gfaj1" class="gfaj"></div>
+			<div id="gfaj2" class="gfaj"></div>
+			<div id="gfaj3" class="gfaj"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	/* //var datalist=new Array(5);
+	var infor1tem;
+	//第一次加载数据前五条
+	 $(function(){
+		$.post('../warning/memo.do',function (data) {
+			for(var i=0;i<data.length;i++)
+				{
+				infor1tem=data[0].receivedt+data[0].memo;
+				var datetimelist=data[i].receivedt.split("-");
+				var dthms=datetimelist[2].split(" ");
+				var datetimestr=datetimelist[0]+"年"+datetimelist[1]+"月"+dthms[0]+"日"+dthms[1];
+				datadivlist[i].innerHTML=datetimestr+"&nbsp;"+data[i].memo;				
+				}
+	    },"json");
+		
+	}); 
+	var datalist=["2016年3月22日15:35   蔡塘广场东南拐角处发生抢劫","2016年3月23日15:03   城市广场发生打架斗殴事件","2016年3月24日18:35   厦门市图书馆西北侧发生抢劫","2016年3月25日15:35   观音山商业街东南方向发生抢劫","2016年3月26日07:35   厦门火车站南广场中心发生诈骗","2016年3月27日05:35   软件园南区东南拐角发生诈骗","2016年3月28日11:35   软件园南区东南拐角处发生诈骗","2016年3月30日10:35   厦门大学校园芙蓉隧道发生抢劫"
+	              ,"2016年4月12日09:35   蔡塘广场东南拐角处发生抢劫","2016年4月15日15:03   城市广场发生打架斗殴事件","2016年4月16日18:35   厦门市图书馆西北侧发生抢劫","2016年4月17日15:35   观音山商业街东南方向发生抢劫","2016年4月18日07:35   厦门火车站南广场中心发生诈骗","2016年4月22日05:35   软件园南区东南拐角发生诈骗","2016年4月23日11:35   软件园南区东南拐角处发生诈骗","2016年4月25日10:35   厦门大学校园芙蓉隧道发生抢劫"
+	              ,"2016年5月12日15:35   蔡塘广场东南拐角处发生抢劫","2016年5月13日15:03   城市广场发生打架斗殴事件","2016年5月14日18:35   厦门市图书馆西北侧发生抢劫","2016年5月15日15:35   观音山商业街东南方向发生抢劫","2016年5月16日07:35   厦门火车站南广场中心发生诈骗","2016年5月20日05:35   软件园南区东南拐角发生诈骗","2016年5月28日11:35   软件园南区东南拐角处发生诈骗","2016年5月30日10:35   厦门大学校园芙蓉隧道发生抢劫"
+	              ,"2016年6月12日09:35   蔡塘广场东南拐角处发生抢劫","2016年6月15日15:03   城市广场发生打架斗殴事件","2016年6月24日18:35   厦门市图书馆西北侧发生抢劫","2016年6月25日15:35   观音山商业街东南方向发生抢劫","2016年6月26日07:35   厦门火车站南广场中心发生诈骗","2016年7月12日05:35   软件园南区东南拐角发生诈骗","2016年7月18日11:35   软件园南区东南拐角处发生诈骗","2016年7月22日10:35   厦门大学校园芙蓉隧道发生抢劫"];		 	 
+	     var datadiv1=document.getElementById('infor1');
+		 var datadiv2=document.getElementById('infor2');
+		 var datadiv3=document.getElementById('infor3');
+		 var datadiv4=document.getElementById('infor4');
+		 var datadiv5=document.getElementById('infor5'); 
+		 var datadivlist=[datadiv1,datadiv2,datadiv3,datadiv4,datadiv5];
+		 //动态请求数据库
+		 /* var iii=0;
+		 setInterval(function(){
+			 $.post('../warning/memo.do',function (data) {
+				 if(infor1tem==data[0].receivedt+data[0].memo)
+					 {
+					 iii++;
+					 for(var i=0;i<data.length;i++)
+						{
+						 var datetimelist=data[i].receivedt.split("-");
+						var dthms=datetimelist[2].split(" ");
+						var datetimestr=datetimelist[0]+"年"+datetimelist[1]+"月"+dthms[0]+"日"+dthms[1];
+						datadivlist[i].innerHTML=datetimestr+"&nbsp;"+data[i].memo+iii;		
+						}
+					 infor1tem=data[0].receivedt+data[0].memo;
+					 }
+			    },"json");},200000); 
+		//静态加载数据
+		var plus=0;
+		setInterval(function(){
+			for(var i=0;i<datadivlist.length;i++)
+			{
+				if((plus+4-i)>=datalist.length)
+				{
+				plus=0;
+				}
+			datadivlist[i].innerHTML=datalist[plus+4-i];			
+			}
+			plus++;
+		},5000);
+		 */
+		 
+		 
+		   //未请求数据库
+		 var Mminute = 0,zrs=[], zrender, zrColor, CircleShape, SectorShape, TextShape, PolylineShape;
+		 var gfajlist=['治安案件','刑事案件','交通事故'];
+		 var gfajsum=[23,21,13];
+		 var jqsum=[81,356,4937];
+		 var colorlist=['#915314','#6D9F29','#2583A7'];
+		 require.config({
+	            packages: [{
+	                name: 'zrender',
+	                location: '../js/zrender-2.1.0/src',
+	                main: 'zrender'
+	            }]
+	        });
+		   require(['zrender', 'zrender/tool/color', 'zrender/shape/Circle', 'zrender/shape/Sector', 'zrender/shape/Text', 'zrender/shape/Polyline'], function(zrender0, color0, CircleShape0, SectorShape0, TextShape0, PolylineShape0) {
+	            zrender = zrender0;
+	            zrColor = color0;
+	            CircleShape = CircleShape0;
+	            SectorShape = SectorShape0;
+	            TextShape = TextShape0;
+	            PolylineShape = PolylineShape0;
+	            //zrs.push(zrender.init(document.getElementById('infordiv')));
+	            for(var i=1;i<=3;i++){
+	                zrs.push(zrender.init(document.getElementById('gfaj'+i)));
+	            }
+	            loadDate();
+	            setInterval(function(){
+	              jqsum[0]+=18;
+	              jqsum[1]+=18;	             
+	  			  gfajsum[0]+=4;
+	  			  gfajsum[1]+=2;
+	  			  gfajsum[2]+=3;	
+	  			  if(jqsum[0]>3700){
+	  				jqsum[0]-=18;
+		            jqsum[1]-=18;	             
+		  			gfajsum[0]-=4;
+		  			gfajsum[1]-=2;
+		  			gfajsum[2]-=3;	
+	  			  }
+	  			  document.getElementById('jrjqsum').innerHTML=jqsum[0];
+	              document.getElementById('bzzjqsum').innerHTML=jqsum[1];
+	  			  loadDate();
+	  		   },5000*2);
+	            //hour = new Date().getHours();
+	            //setInterval("hourActive()",1000*60);
+	            
+	        });
+		   //加载数据		  
+		  function loadDate(){		
+			  for(var i=0;i<zrs.length;i++){
+				  var x=Math.round(zrs[i].getWidth() / 2);
+				  var y=Math.round(zrs[i].getHeight() / 2);
+				  var r0 = 28;
+		          var r = 40;
+		          //var endAngle = (0.3 * 360 + 30).toFixed(2) - 0;
+		          //上周日平均值扇形
+		          zrs[i].clear();
+		    	  zrs[i].addShape(new SectorShape({
+					  style:{
+						  x:x,	//圆心横坐标
+						  y:y+25,	//圆心纵坐标
+						  r0:r0,
+						  r:r,
+						  startAngle :-60,
+	                      endAngle : 240,
+	                      //brushType : 'both',
+	                      color :'#0F214F',
+	                      //strokeColor : '#fff'
+					  }
+				  }));
+		          //今日高发警情总数扇形
+				   zrs[i].addShape(new SectorShape({
+					  style:{
+						  x:x,	//圆心横坐标
+						  y:y+25,	//圆心纵坐标
+						  r0:r0,
+						  r:r,
+						  startAngle :220-(gfajsum[i]/jqsum[1])*240,
+	                      endAngle : 240,
+	                      //brushType : 'both',
+	                      color : colorlist[i],
+	                      //strokeColor : '#fff'
+					  }
+				  })); 
+			//高发案件类型文本
+				   zrs[i].addShape(new TextShape({
+		                  style: {
+		                      x: 77,
+		                      y: 40,
+		                      color: '#C4C4CE',
+		                      text: gfajlist[i],
+		                      textFont: "bold 16px '微软雅黑'",
+		                      textAlign: 'center'
+		                  }	  
+					  }));
+			//高发案件总量文本
+					zrs[i].addShape(new TextShape({
+						style:{
+							x:x,
+							y:y+25,
+							color: colorlist[i],
+							text:gfajsum[i],
+							textFont:"bold 16px '微软雅黑'",
+							textAlign:'center'
+						}
+					}));
+					  zrs[i].render(); 
+			  }		
+		  }  		 
+		  
+		  
+		  
+		  
+		 /* //请求数据库动态加载警情数据
+		  var Mminute = 0,zrs=[], zrender, zrColor, CircleShape, SectorShape, TextShape, PolylineShape;
+		  function loadData(){
+			  $.post('../warning/hxgfjq.do',functon(data){
+				  //var gfajlist=['治安案件','刑事案件','交通事故'];
+					 var gfajsum=[23,21,13];
+					 var jqsum=[81,356,4937];
+					 var colorlist=['#915314','#6D9F29','#2583A7'];
+					 require.config({
+				            packages: [{
+				                name: 'zrender',
+				                location: '../js/zrender-2.1.0/src',
+				                main: 'zrender'
+				            }]
+				        });
+					   require(['zrender', 'zrender/tool/color', 'zrender/shape/Circle', 'zrender/shape/Sector', 'zrender/shape/Text', 'zrender/shape/Polyline'], function(zrender0, color0, CircleShape0, SectorShape0, TextShape0, PolylineShape0) {
+				            zrender = zrender0;
+				            zrColor = color0;
+				            CircleShape = CircleShape0;
+				            SectorShape = SectorShape0;
+				            TextShape = TextShape0;
+				            PolylineShape = PolylineShape0;
+				            //zrs.push(zrender.init(document.getElementById('infordiv')));
+				            for(var i=1;i<=3;i++){
+				                zrs.push(zrender.init(document.getElementById('gfaj'+i)));
+				            }
+				            loadDate();
+				            setInterval(function(){
+				              jqsum[0]+=18;
+				              jqsum[1]+=18;	             
+				  			  gfajsum[0]+=4;
+				  			  gfajsum[1]+=2;
+				  			  gfajsum[2]+=3;	
+				  			  if(jqsum[0]>3700){
+				  				jqsum[0]-=18;
+					            jqsum[1]-=18;	             
+					  			gfajsum[0]-=4;
+					  			gfajsum[1]-=2;
+					  			gfajsum[2]-=3;	
+				  			  }
+				  			  document.getElementById('jrjqsum').innerHTML=jqsum[0];
+				              document.getElementById('bzzjqsum').innerHTML=jqsum[1];
+				  			  loadDate();
+				  		   },5000*2);
+				            //hour = new Date().getHours();
+				            //setInterval("hourActive()",1000*60);
+				            
+				        });
+					   //加载数据		  
+					  function loadDate(){		
+						  for(var i=0;i<zrs.length;i++){
+							  var x=Math.round(zrs[i].getWidth() / 2);
+							  var y=Math.round(zrs[i].getHeight() / 2);
+							  var r0 = 28;
+					          var r = 40;
+					          var endAngle = (0.3 * 360 + 30).toFixed(2) - 0;
+					          //上周日平均值扇形
+					          zrs[i].clear();
+					    	  zrs[i].addShape(new SectorShape({
+								  style:{
+									  x:x,	//圆心横坐标
+									  y:y+25,	//圆心纵坐标
+									  r0:r0,
+									  r:r,
+									  startAngle :-60,
+				                      endAngle : 240,
+				                      //brushType : 'both',
+				                      color :'#0F214F',
+				                      //strokeColor : '#fff'
+								  }
+							  }));
+					          //今日高发警情总数扇形
+							   zrs[i].addShape(new SectorShape({
+								  style:{
+									  x:x,	//圆心横坐标
+									  y:y+25,	//圆心纵坐标
+									  r0:r0,
+									  r:r,
+									  startAngle :220-(gfajsum[i]/jqsum[1])*240,
+				                      endAngle : 240,
+				                      //brushType : 'both',
+				                      color : colorlist[i],
+				                      //strokeColor : '#fff'
+								  }
+							  })); 
+						//高发案件类型文本
+							   zrs[i].addShape(new TextShape({
+					                  style: {
+					                      x: 77,
+					                      y: 40,
+					                      color: '#C4C4CE',
+					                      text: gfajlist[i],
+					                      textFont: "bold 16px '微软雅黑'",
+					                      textAlign: 'center'
+					                  }	  
+								  }));
+						//高发案件总量文本
+								zrs[i].addShape(new TextShape({
+									style:{
+										x:x,
+										y:y+25,
+										color: colorlist[i],
+										text:gfajsum[i],
+										textFont:"bold 16px '微软雅黑'",
+										textAlign:'center'
+									}
+								}));
+								  zrs[i].render(); 
+						  }		
+					  }
+			  });
+			  
+		  }	*/		  		 
+	</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+    <title>ECharts</title>
+    <style type="text/css"> 
+    *{margin: 0;padding: 0;font-family: '微软雅黑';}
+    #main{width:410px;height:930px;position:absolute;left:-25px;top:0px;float:left;overfolw:hidden;z-index:100;}  
+    /* #main{animation: group 10s infinite linear;} */
+    #tbldiv0{left:20px;top:50px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;}
+    #tbldiv1{left:20px;top:260px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;}
+    #tbldiv2{left:20px;top:470px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;}
+    #tbldiv3{left:20px;top:680px;position:absolute;width:390px;height:200px;background:#0B0F2A;opacity:1.0;overflow:hidden;}
+    
+    .fenju{height:auto;width:auto;left:30px;top:10px;font-size:26px;color:#ED7F00;position:absolute;border:0px red solid;}
+    .gaofaone{height:auto;width:auto;z-index:100;left:28px;top:45px;color:#C4C4CE;font-size:20px;position:absolute;border:0px red solid;}    
+    .gaofaonenum{height:auto;width:auto;left:35px;top:68px;font-size:22px;color:#ED7F00;position:absolute;border:0px red solid;}  
+    .thisqitxt{height:auto;width:auto;left:170px;top:20px;font-size:22px;color:#45B1D8;position:absolute;border:0px red solid;}  
+    .lastqitxt{height:auto;width:auto;left:235px;top:20px;font-size:22px;color:#5E73FB;position:absolute;border:0px red solid;}  
+    .qingtxt{height:auto;width:auto;left:30px;top:110px;font-size:22px;color:#C4C4CE;position:absolute;border:0px red solid;}  
+    .litxt{height:auto;width:auto;left:30px;top:150px;font-size:22px;color:#C4C4CE;position:absolute;border:0px red solid;}       
+    .line{height:150px;width:1px;left:225px;top:25px;background:#2EB2DA;position:absolute;z-index:100;}  
+    .thisgrade{height:auto;width:auto;left:170px;top:60px;font-size:22px;color:#C4C4CE;position:absolute;border:0px red solid;}  
+    .lastgrade{height:auto;width:auto;left:235px;top:60px;font-size:22px;color:#C4C4CE;position:absolute;border:0px red solid;}  
+    .thisrate{height:auto;width:auto;left:308px;top:113px;font-size:20px;color:#EA0323;position:absolute;border:0px red solid;}  
+    .ratearrow{height:20px;width:12px;left:375px;top:115px;position:absolute;border:0px red solid;}  
+    .thisqing{height:15px;width:auto;left:85px;top:119px;background:#45B1D8;position:absolute;border:0px red solid;}       
+    .thisqingnum{height:auto;width:auto;left:190px;top:113px;font-size:20px;color:#45B1D8;position:absolute;border:0px red solid;}  
+    .lastqing{height:15px;width:auto;left:225px;top:119px;background:#5E73FB;position:absolute;border:0px red solid;}  
+    .lastqingnum{height:auto;width:auto;left:300px;top:113px;font-size:20px;color:#5E73FB;position:absolute;border:0px red solid;}  
+    .thisli{height:15px;width:auto;left:205px;top:159px;background:#45B1D8;position:absolute;border:0px red solid;}  
+    .thislinum{height:auto;width:auto;left:190px;top:153px;font-size:20px;color:#45B1D8;position:absolute;border:0px red solid;}   
+    .lastli{height:15px;width:auto;left:225px;top:159px;background:#5E73FB;position:absolute;border:0px red solid;}  
+    .lastlinum{height:auto;width:auto;left:260px;top:153px;font-size:20px;color:#5E73FB;position:absolute;border:0px red solid;}           
+          /*  @keyframes group{
+             0%{top:0px;opacity: 1;}
+             92%{top:0px;opacity: 1;}
+             93%{top:-20px;opacity: 0.5;}
+             94%{top:-50px;opacity: 0;}
+             96%{top:40px;opacity: 0;}
+             98%{top:30px;opacity: 0;}
+             100%{top:0px;opacity: 1;}
+         }  */
+    </style>
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/zrender-2.1.0/src/zrender.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+</head>
+<body>
+		<div id="main">
+			<div id="tbldiv0" class="tbldiv">
+				<div id="fenju0" class="fenju"></div>	<!-- 分局名称 -->
+				<div id="gaofaone0" class="gaofaone"></div>	<!-- 高发案件名称 -->
+				<div id="gaofaonenum0" class="gaofaonenum"></div>	<!-- 高发案件数量 -->
+				<div id="thisqitxt0" class="thisqitxt">本期</div>		
+				<div id="lastqitxt0" class="lastqitxt">上期</div>		
+				<div id="qingtxt0" class="qingtxt">警情</div>	
+				<div id="litxt0" class="litxt">警力</div>
+				<div id="line0" class="line"></div>		<!-- 竖线 -->
+				<div id="thisgrade0" class="thisgrade"></div>		<!-- 本期警情等级 -->
+				<div id="lastgrade0" class="lastgrade"></div>		<!-- 上期警情等级 -->
+				<div id="thisrate0" class="thisrate"></div>	<!-- 本期变化比率 -->
+				<div id="ratearrow0" class="ratearrow"></div>	<!-- 本期变化上升箭头 -->
+				<div id="thisqing0" class="thisqing"></div>		<!-- 本期警情横条 -->
+				<div id="thisqingnum0" class="thisqingnum"></div>		<!-- 本期警情数量 -->
+				<div id="lastqing0" class="lastqing"></div>		<!-- 上期警情横条 -->
+				<div id="lastqingnum0" class="lastqingnum"></div>		<!-- 上期警情数量 -->
+				<div id="thisli0" class="thisli"></div>		<!-- 本期警力横条 -->
+				<div id="thislinum0" class="thislinum"></div>		<!-- 本期警力数量 -->
+				<div id="lastli0" class="lastli"></div>		<!-- 上期警力横条 -->
+				<div id="lastlinum0" class="lastlinum"></div>		<!-- 上期警力数量 -->
+			</div>
+			<div id="tbldiv1" class="tbldiv">
+				<div id="fenju1" class="fenju"></div>
+				<div id="gaofaone1" class="gaofaone"></div>
+				<div id="gaofaonenum1" class="gaofaonenum"></div>
+				<div id="thisqitxt1" class="thisqitxt">本期</div>
+				<div id="lastqitxt1" class="lastqitxt">上期</div>
+				<div id="qingtxt1" class="qingtxt">警情</div>
+				<div id="litxt1" class="litxt">警力</div>
+				<div id="line1" class="line"></div>
+				<div id="thisgrade1" class="thisgrade"></div>
+				<div id="lastgrade1" class="lastgrade"></div>
+				<div id="thisrate1" class="thisrate"></div>
+				<div id="ratearrow1" class="ratearrow"></div>
+				<div id="thisqing1" class="thisqing"></div>
+				<div id="thisqingnum1" class="thisqingnum"></div>
+				<div id="lastqing1" class="lastqing"></div>
+				<div id="lastqingnum1" class="lastqingnum"></div>
+				<div id="thisli1" class="thisli"></div>
+				<div id="thislinum1" class="thislinum"></div>
+				<div id="lastli1" class="lastli"></div>
+				<div id="lastlinum1" class="lastlinum"></div>
+			</div>
+			<div id="tbldiv2" class="tbldiv">
+				<div id="fenju2" class="fenju"></div>
+				<div id="gaofaone2" class="gaofaone"></div>
+				<div id="gaofaonenum2" class="gaofaonenum"></div>
+				<div id="thisqitxt2" class="thisqitxt">本期</div>
+				<div id="lastqitxt2" class="lastqitxt">上期</div>
+				<div id="qingtxt2" class="qingtxt">警情</div>
+				<div id="litxt2" class="litxt">警力</div>
+				<div id="line2" class="line"></div>
+				<div id="thisgrade2" class="thisgrade"></div>
+				<div id="lastgrade2" class="lastgrade"></div>
+				<div id="thisrate2" class="thisrate"></div>
+				<div id="ratearrow2" class="ratearrow"></div>
+				<div id="thisqing2" class="thisqing"></div>
+				<div id="thisqingnum2" class="thisqingnum"></div>
+				<div id="lastqing2" class="lastqing"></div>
+				<div id="lastqingnum2" class="lastqingnum"></div>
+				<div id="thisli2" class="thisli"></div>
+				<div id="thislinum2" class="thislinum"></div>
+				<div id="lastli2" class="lastli"></div>
+				<div id="lastlinum2" class="lastlinum"></div>
+			</div>
+			<div id="tbldiv3" class="tbldiv">
+				<div id="fenju3" class="fenju"></div>
+				<div id="gaofaone3" class="gaofaone"></div>
+				<div id="gaofaonenum3" class="gaofaonenum"></div>
+				<div id="thisqitxt3" class="thisqitxt">本期</div>
+				<div id="lastqitxt3" class="lastqitxt">上期</div>
+				<div id="qingtxt3" class="qingtxt">警情</div>
+				<div id="litxt3" class="litxt">警力</div>
+				<div id="line3" class="line"></div>
+				<div id="thisgrade3" class="thisgrade"></div>
+				<div id="lastgrade3" class="lastgrade"></div>
+				<div id="thisrate3" class="thisrate"></div>
+				<div id="ratearrow3" class="ratearrow"></div>
+				<div id="thisqing3" class="thisqing"></div>
+				<div id="thisqingnum3" class="thisqingnum"></div>
+				<div id="lastqing3" class="lastqing"></div>
+				<div id="lastqingnum3" class="lastqingnum"></div>
+				<div id="thisli3" class="thisli"></div>
+				<div id="thislinum3" class="thislinum"></div>
+				<div id="lastli3" class="lastli"></div>
+				<div id="lastlinum3" class="lastlinum"></div>
+			</div>
+		</div>
+	<script type="text/javascript">
+	var refreshTime =1000*60*5;
+    $(function () {
+    	refreshTime = getRefreshTime(3,'治安防控等级信息');
+    });
+	
+	
+	//计算警情、警力横条的宽度
+	var maxNum;		//警情最大值
+	var policeMaxNum;	//警力最大值
+	var infoList=[];	//派出所信息内容集合
+	var index=0;
+	var timer;
+	function getWidth( x,maxNum){
+		 return x/maxNum*40;
+	 }
+	
+	getData();
+	setInterval(function(){
+		clearInterval(timer);
+		getData();
+	},refreshTime);
+	
+	//读取数据库
+	function getData(){
+	$.post('../warning/paichusuodata.do',function(data){
+		maxNum=data.警情最大值;
+		policeMaxNum=data.警力最大值;
+		infoList=data.fenju;
+		infoShow();
+		timer=setInterval(function(){
+			//$('#main').fadeOut(1500);
+			//$('#main').fadeIn(1500);
+			infoChange();
+			index+=4;
+			if(index>55){
+				index=0;
+			}
+			//infoShow();
+			setTimeout('infoShow();',1000);
+		},1000*10);
+	},'json');
+	}
+	
+	//循环展示分局信息
+	function infoShow(){
+		
+		for(var i=0;i<4;i++){
+			var info=infoList[i+index];
+			$('#fenju'+i).html(info.name);
+			$('#gaofaone'+i).html(info.gaofaName);
+			$('#gaofaonenum'+i).html(info.gaofaNum);
+			$('#thisgrade'+i).html(info.thisGrade);
+			$('#lastgrade'+i).html(info.lastGrade);
+			$('#thisrate'+i).html(info.ThisRate!=0?info.ThisRate+'%':0);
+			$('#thisrate'+i).css("color",info.ThisRate>0?"#EA0323":"#118408");
+			$('#ratearrow'+i).css("background",info.ThisRate>0?"url(../images/zhian/up.gif)":"");
+			
+			var thisqingWidth=getWidth(info.ThisAmount,maxNum);
+			var lastqingWidth=getWidth(info.LastAmount,maxNum);
+			$('#thisqing'+i).css("left",225-thisqingWidth);
+			$('#thisqing'+i).css("width",thisqingWidth);
+			$('#thisqingnum'+i).css("left",info.ThisAmountNum<10?225-thisqingWidth-16:info.ThisAmountNum>=100?225-thisqingWidth-40:225-thisqingWidth-28);
+			$('#thisqingnum'+i).html(info.ThisAmountNum);
+			$('#lastqing'+i).css("width",lastqingWidth);
+			$('#lastqingnum'+i).html(info.LastAmountNum);
+			$('#lastqingnum'+i).css("left",225+lastqingWidth+5);
+			
+			var thisliWidth=getWidth(info.ThisPolice,policeMaxNum);
+			var lastliWidth=getWidth(info.LastPolice,policeMaxNum);
+			$('#thisli'+i).css("left",225-thisliWidth);
+			$('#thisli'+i).css("width",thisliWidth);
+			$('#thislinum'+i).css("left",info.ThisPoliceNum<10?225-thisliWidth-16:info.ThisPoliceNum>=100?225-thisliWidth-40:225-thisliWidth-28);
+			$('#thislinum'+i).html(info.ThisPoliceNum);
+			$('#lastli'+i).css("width",lastliWidth);
+			$('#lastlinum'+i).html(info.LastPoliceNum);
+			$('#lastlinum'+i).css("left",225+lastliWidth+5);
+		}
+	}
+	
+	//数据变换时的淡出淡入效果
+	function infoChange(){
+		
+		for(var i=0;i<4;i++){
+			$('#fenju'+i).fadeOut(1000);
+			$('#fenju'+i).fadeIn(1000);
+			$('#gaofaone'+i).fadeOut(1000);
+			$('#gaofaone'+i).fadeIn(1000);
+			$('#gaofaonenum'+i).fadeOut(1000);
+			$('#gaofaonenum'+i).fadeIn(1000);
+			$('#thisgrade'+i).fadeOut(1000);
+			$('#thisgrade'+i).fadeIn(1000);
+			$('#lastgrade'+i).fadeOut(1000);
+			$('#lastgrade'+i).fadeIn(1000);
+			$('#thisrate'+i).fadeOut(1000);
+			$('#thisrate'+i).fadeIn(1000);
+			$('#ratearrow'+i).fadeOut(1000);
+			$('#ratearrow'+i).fadeIn(1000);
+			
+			$('#thisqing'+i).fadeOut(1000);
+			$('#thisqing'+i).fadeIn(1000);
+			$('#thisqingnum'+i).fadeOut(1000);
+			$('#thisqingnum'+i).fadeIn(1000);
+			$('#lastqing'+i).fadeOut(1000);
+			$('#lastqing'+i).fadeIn(1000);
+			$('#lastqingnum'+i).fadeOut(1000);
+			$('#lastqingnum'+i).fadeIn(1000);
+			
+			$('#thisli'+i).fadeOut(1000);
+			$('#thisli'+i).fadeIn(1000);
+			$('#thislinum'+i).fadeOut(1000);
+			$('#thislinum'+i).fadeIn(1000);
+			$('#lastli'+i).fadeOut(1000);
+			$('#lastli'+i).fadeIn(1000);
+			$('#lastlinum'+i).fadeOut(1000);
+			$('#lastlinum'+i).fadeIn(1000);
+		}
+	}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <title>24小时警情走势</title>
+    <!-- 引入 echarts.js -->
+    <script src="../js/echarts.js"></script>
+    <style type="text/css">
+        *{margin: 0;padding: 0;font-family: '微软雅黑';}
+        body{height: 302px;overflow: hidden;}
+        .title{height: 35px;margin-left:-10px;}
+        .mtitle{margin-left:180px;border:0px solid red;font-size: 21px;text-indent:0em;color: #34D1FE;font-weight: 600; float: left; }
+        .mmeta span{margin: 3px;}
+    </style>
+</head>
+<body>
+<div class="mtitle">&nbsp&nbsp勤务力量</div>
+<div id="main" style="border:0px solid red;width: 610px;height: 227px;margin: 0px 0px 0px 0px;"></div>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    var x = [150, 150, 80, 180, 90, 240, 90, 120,60];
+    var option = {
+        title: {
+            text: '1205\n total',
+            backgroundColor:'rgba(18,20,52,0.4)',
+            padding:20,
+            textStyle:{
+                color:'rgb(229,125,0)'
+            },
+            x:465,
+            y:0
+        },
+        grid:{
+          left:'6%',
+            top:'9%'
+        },
+        tooltip: {},
+        legend: {
+            show:false,
+            data:['销量']
+        },
+        xAxis: {
+            axisLabel : {
+                show:true,
+                interval:0,
+                textStyle:{
+                    color:'white'
+                }
+            },
+            splitNumber:8,
+            data: ["24H\n接警处","拦截圈","应急处置\n屯兵点","反恐应急\n处突警力","群防\n群治","社会联动\n力量","应急机动\n备勤力量","节假日\n机关\n执勤力量 ","节假日\n市局\n 应急处突力量"]
+        },
+        yAxis: {
+            axisLabel : {
+                show:true,
+                interval:0,
+                textStyle:{
+                    color:'white'
+                }
+            },
+            splitLine: {show:false},
+        },
+        series: [{
+            barWidth:22,
+            name: '力量',
+            type: 'bar',
+            data: [
+                {
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(155,126,247)'
+                        }
+                    },
+                    value:x[0],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(98,114,251)'
+                        }
+                    },
+                    value:x[1],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(102,143,249)'
+                        }
+                    },
+                    value:x[2],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(68,155,225)'
+                        }
+                    },
+                    value:x[3],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(58,120,229)'
+                        }
+                    },
+                    value:x[4],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(82,201,173)'
+                        }
+                    },
+                    value:x[5],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(82,189,224)'
+                        }
+                    },
+                    value:x[6],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(80,201,84)'
+                        }
+                    },
+                    value:x[7],
+                },{
+                    itemStyle:{
+                        normal:{
+                            color:'rgb(185,201,36)'
+                        }
+                    },
+                    value:x[8],
+                }
+            ]
+        }]
+    };
+    myChart.setOption(option);
+    /*------------------------------------------功能部分----------------------------------------------------------*/
+
+
+
+</script>
+</body>
+</html>

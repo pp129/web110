@@ -1,0 +1,189 @@
+.icon-blank{
+	background:url('icons/blank.gif') no-repeat center center;
+}
+.icon-add{
+	background:url('icons/edit_add.png') no-repeat center center;
+}
+.icon-edit{
+	background:url('icons/pencil.png') no-repeat center center;
+}
+.icon-remove{
+	background:url('icons/edit_remove.png') no-repeat center center;
+}
+.icon-save{
+	background:url('icons/filesave.png') no-repeat center center;
+}
+.icon-cut{
+	background:url('icons/cut.png') no-repeat center center;
+}
+.icon-ok{
+	background:url('icons/ok.png') no-repeat center center;
+}
+.icon-no{
+	background:url('icons/no.png') no-repeat center center;
+}
+.icon-cancel{
+	background:url('icons/cancel.png') no-repeat center center;
+}
+.icon-reload{
+	background:url('icons/reload.png') no-repeat center center;
+}
+.icon-search{
+	background:url('icons/search.png') no-repeat center center;
+}
+.icon-print{
+	background:url('icons/print.png') no-repeat center center;
+}
+.icon-help{
+	background:url('icons/help.png') no-repeat center center;
+}
+.icon-undo{
+	background:url('icons/undo.png') no-repeat center center;
+}
+.icon-redo{
+	background:url('icons/redo.png') no-repeat center center;
+}
+.icon-back{
+	background:url('icons/back.png') no-repeat center center;
+}
+.icon-sum{
+	background:url('icons/sum.png') no-repeat center center;
+}
+.icon-tip{
+	background:url('icons/tip.png') no-repeat center center;
+}
+.icon-filter{
+	background:url('icons/filter.png') no-repeat center center;
+}
+
+
+.icon-mini-add{
+	background:url('icons/mini_add.png') no-repeat center center;
+}
+.icon-mini-edit{
+	background:url('icons/mini_edit.png') no-repeat center center;
+}
+.icon-mini-refresh{
+	background:url('icons/mini_refresh.png') no-repeat center center;
+}
+
+.icon-home{
+    background:url('icons/home.png') no-repeat center center;
+}
+
+.icon-rainbow{
+     background:url('icons/rainbow.png') no-repeat center center;
+ }
+
+.icon-vector{
+    background:url('icons/vector.png') no-repeat center center;
+}
+
+.icon-excel{
+    background:url('icons/excel.png') no-repeat center center;
+}
+
+.icon-report{
+    background:url('icons/report.png') no-repeat center center;
+}
+
+.icon-bus{
+    background:url('icons/bus.png') no-repeat center center;
+}
+
+.icon-reportForm{
+     background:url('icons/reportForm.png') no-repeat center center;
+ }
+.icon-baseInfoM{
+    background:url('icons/baseInfoM.png') no-repeat center center;
+}
+.icon-manager{
+    background:url('icons/manager.png') no-repeat center center;
+}
+
+.icon-department{
+    background:url('icons/department.png') no-repeat center center;
+}
+
+.icon-baseInfo{
+    background:url('icons/baseInfo.png') no-repeat center center;
+}
+
+.icon-stationM{
+     background:url('icons/stationM.png') no-repeat center center;
+ }
+.icon-reportM{
+    background:url('icons/reportM.png') no-repeat center center;
+}
+.icon-bullet_blue{
+    background:url('icons/bullet_blue.png') no-repeat center center;
+}
+
+.icon-cog{
+    background:url('icons/cog.png') no-repeat center center;
+}
+
+.icon-pie{
+    background:url('icons/pie.png') no-repeat center center;
+}
+
+.icon-expand{
+    background:url('icons/expand.png') no-repeat center center;
+}
+
+.icon-collapse{
+    background:url('icons/collapse.png') no-repeat center center;
+}
+
+.icon-video{
+    background:url('icons/video.png') no-repeat center center;
+}
+
+.icon-maps{
+    background:url('icons/maps.png') no-repeat center center;
+}
+
+.icon-system{
+    background:url('icons/system.png') no-repeat center center;
+}
+
+.icon-systemM{
+    background:url('icons/systemM.png') no-repeat center center;
+}
+
+.icon-auth{
+    background:url('icons/auth.png') no-repeat center center;
+}
+
+.icon-mid{
+    background:url('icons/mid.png') no-repeat center center;
+}
+.icon-trans{
+    background:url('icons/trans.png') no-repeat center center;
+}
+.icon-oriter{
+    background:url('icons/oriter.png') no-repeat center center;
+}
+.icon-park{
+    background:url('icons/park.png') no-repeat center center;
+}
+.icon-service{
+    background:url('icons/service.png') no-repeat center center;
+}
+.icon-board{
+    background:url('icons/board.png') no-repeat center center;
+}
+.icon-fuel{
+    background:url('icons/fuel.png') no-repeat center center;
+}
+.icon-operateLog{
+    background:url('icons/operateLog.png') no-repeat center center;
+}
+.icon-user{
+    background:url('icons/user.png') no-repeat center center;
+}
+.icon-role{
+    background:url('icons/role.png') no-repeat center center;
+}
+
+.icon-blank{display: none;}

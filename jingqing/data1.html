@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+	<script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+	<script src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+	<script type="text/javascript" src="../js/common.js"></script>
+	<title>数据分析</title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			font-family: '微软雅黑';
+		}
+		
+		body {
+			height: 302px;
+			overflow: hidden;
+		}
+		
+		.mmeta span {
+			margin: 3px;
+		}
+		
+		.name1 {
+			border: 0px solid red;
+			color: rgb(196, 196, 206);
+			font-size: 46px;
+			width: 222px;
+			height: 119px;
+			float: left;
+			line-height: 42px;
+			text-align: left;
+		}
+		
+		.data1 {
+			border: 0px solid red;
+			color: rgb(230, 135, 0);
+			width: 223px;
+			height: 119px;
+			text-align: left;
+			line-height: 52px;
+			font-size: 50px;
+			font-weight: bold;
+			text-align: left
+		}
+		
+		.data {
+			border: 0px solid red;
+			color: rgb(97, 192, 224);
+			width: 245px;
+			height: 39px;
+			text-align: left;
+			line-height: 52px;
+			font-size: 65px;
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		.name {
+			border: 0px solid red;
+			color: rgb(196, 196, 206);
+			font-size: 50px;
+			width: 250px;
+			height: 39px;
+			float: left;
+			line-height: 42px;
+			text-align: center;
+		}
+		
+		.topImg {
+			border: 0px solid red;
+			float: left;
+			margin-left: 0px;
+			width: 120px;
+			height: 52px;
+			color: white;
+			font-size: 22px;
+		}
+	</style>
+</head>
+<div id="main" style="width: 328px;height: 206px;border:0px solid red;margin:50px 0px 0px 0px;padding:0;">
+	<table class="detail">
+		<table style="table-layout: fixed">
+			<tr>
+				<td>
+					<span class="name" style="text-indent: 0em;line-height: 70px;width:305px;height:70px;">今日电话总数</span>
+				</td>
+				<td>
+					<div class="data" style="font-size:80px;height: 70px;line-height: 70px;color:rgb(230,135,0)" id="todayCall"></div>
+				</td>
+				<td>
+					<span class="name" style="text-indent: 0em;height: 70px;line-height: 70px;width:995px;text-align: right;">昨日电话总数</span>
+				</td>
+				<td>
+					<div class="data" style="font-size:80px;height: 70px;line-height: 70px;" id="todayCall1"></div>
+				</td>
+			</tr>
+		</table>
+
+		<!--<table style="table-layout: fixed;margin-top: 60px;">-->
+			<!--<tr>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">刑事案件</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="xsaj"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="width:110px;text-indent: 0em;line-height: 52px;">纠纷</span>-->
+
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="jf"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">社会联动</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="shld"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">消防火警</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="xfhj"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">无效呼叫</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="wxhj"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">刑事警情</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="xsaj1" style="color:rgb(97,192,224)"></div>-->
+				<!--</td>-->
+			<!--</tr>-->
+			<!--<tr>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">交通事故</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="jtsg"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">公安救助</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="gajz"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">警务协作</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="jwxz"></div>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">交通事故</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="jtsg1" style="color:rgb(97,192,224)"></div>-->
+				<!--</td>-->
+			<!--</tr>-->
+			<!--<tr>-->
+				<!--<td>-->
+					<!--<span class="name1" style="text-indent: 0em;line-height: 52px;">治安警情</span>-->
+				<!--</td>-->
+				<!--<td>-->
+					<!--<div class="data1" id="zaaj"></div>-->
+				<!--</td>-->
+			<!--</tr>-->
+		<!--</table>-->
+		<table style="table-layout: fixed;margin-top: 60px;">
+			<tr>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">刑事案件
+						<div class="data1" id="xsaj" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:240px;text-indent: 0em;line-height: 52px;">纠纷
+						 <div class="data1" id="jf" style="width:0px;float: right;margin-right: 120px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:310px;text-indent: 0em;line-height: 52px;">社会联动
+						<div class="data1" id="shld" style="width:0px;float: right;margin-right: 120px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">消防火警
+						<div class="data1" id="xfhj" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">无效呼叫
+						<div class="data1" id="wxhj" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">刑事案件
+						<div class="data1" id="xsaj1" style="width:0px;float: right;margin-right: 100px;display: block;color:rgb(97,192,224)"></div>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span class="name1" style="width:320px;text-indent: 0em;line-height: 52px;">交通事故
+						<div class="data1" id="jtsg" style="width:0px;float: right;margin-right: 110px;display: block;"></div></span>
+				</td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">公安救助
+						<div class="data1" id="gajz" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					</span>
+				</td>
+				<td>
+					<span class="name1" style="width:310px;text-indent: 0em;line-height: 52px;">警务协作
+						<div class="data1" id="jwxz" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					 </span>
+				</td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">治安警情
+						<div class="data1" id="zaaj" style="width:0px;float: right;margin-right: 100px;display: block;"></div>
+					</span>
+				</td>
+				<td></td>
+				<td>
+					<span class="name1" style="width:300px;text-indent: 0em;line-height: 52px;">交通事故
+						<div class="data1" id="jtsg1" style="width:0px;float: right;margin-right: 100px;display: block;color:rgb(97,192,224)"></div>
+					</span>
+				</td>
+			</tr>
+		</table>
+
+	</table>
+</div>
+<script type="text/javascript">
+	function checkNull(src) {
+		if(src == null) {
+			return 0;
+		} else {
+			return src;
+		}
+	}
+
+	var idArr = ["#todayCall", "#xsaj", "#jtsg", "#zaaj", "#xfhj", "#shld", "#jf", "#gajz", "#jwxz", "#wxhj",
+		"#todayCall1", "#xsaj1", "#jtsg1"
+	];
+	var nameArr = ['今日电话量总数', '今日刑事案件', '今日交通事故', '今日治安案件', '今日消防火警', '今日社会联动', '今日纠纷',
+		'今日公安救助', '今日警务协作', '今日无效呼叫', '昨日电话量总数', '昨日刑事案件', '昨日交通事故'
+	];
+
+	var data = [1336, '-', 2559, 86, 221, 689, 6, 3, 0, 109, 6, 90, 1, 0, 0];
+
+	function gotData() {
+		$.post('../demo/data.do', function(data) {
+			var checkName = []; //初始化变化数据存放组
+			var checkData = [];
+			$(".fadeToggle").removeClass("fadeToggle"); //移除类
+			for(var i = 0; i < idArr.length; i++) {
+				if($(idArr[i]).html() != checkNull(data[nameArr[i]])||checkNull(data[nameArr[i]])==0) { //判断数据是否变化
+					checkName.push(idArr[i]); //将变化的数据放入数组中
+					checkData.push(checkNull(data[nameArr[i]]));
+					$(idArr[i]).addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+				}
+			}
+			$(".fadeToggle").fadeToggle(1500);
+			setTimeout(function() { //在淡入之后更新数据
+				for(var i = 0; i < idArr.length; i++) { //更新数据
+					$(checkName[i]).html(checkData[i]);
+				}
+			}, 1500);
+			$(".fadeToggle").fadeToggle(1500);
+		}, "json");
+	}
+
+	var refreshTime = 30000;
+	$(function() {
+		refreshTime = getRefreshTime(6,'接线情况汇总');
+		gotData();
+	});
+	setInterval(function() {
+		gotData();
+	}, refreshTime);
+</script>

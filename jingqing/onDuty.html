@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <script type="text/javascript" src="../js/jquery-1.9.1.js"></script>
+    <script src="../js/echarts-2.2.7/build/dist/echarts.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+    <title>值班领导</title>
+</head>
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: '微软雅黑';
+    }
+
+    body {
+        height: 302px;
+        overflow: hidden;
+    }
+
+    .mmeta span {
+        margin: 3px;
+    }
+
+    .data {
+        border: 0px solid red;
+        color: rgb(230, 135, 0);
+        width: 245px;
+        height: 39px;
+        text-align: left;
+        line-height: 44px;
+        font-size: 42px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .name {
+        border: 0px solid red;
+        color: rgb(196, 196, 206);
+        font-size: 44px;
+        width: 250px;
+        height: 39px;
+        float: left;
+        line-height: 42px;
+        text-align: center;
+    }
+
+    .from {
+        border: 0px solid red;
+        color: rgb(109, 197, 235);
+        font-size: 44px;
+        width: 250px;
+        height: 39px;
+        float: left;
+        line-height: 42px;
+        text-align: center;
+    }
+    .reg{
+        width: 0.1px;
+        border: 1px solid  rgb(196, 196, 206);
+        float: left;
+        margin-left:10px;
+        height: 46px;
+    }
+    .mtitle {
+        left: 10px;
+        position: absolute;
+        width: 1860px;
+        height: 75px;
+        background: url(../images/jingqing/line.png) 0px 65px no-repeat;
+        background-size: 100% 5px;
+    }
+</style>
+<body>
+<div style="width: 100%;height: 100%;">
+    <div  class="name" style="width:300px;height:50px;">【值班领导】</div>
+    <div  class="from" style="width:100px;height:50px;float: left">市局</div>
+    <div  id="sjDuty" class="data" style="width:130px;height:50px;float: left">某某某</div>
+    <div  class="reg"></div>
+    <div  class="from" style="width:200px;height:50px;float: left">指挥中心</div>
+    <div  id="zhzxDuty" class="data" style="width:295px;height:50px;float: left">某某某、某某某</div>
+    <div  class="reg"></div>
+    <div  id="changeName" class="from" style="width:200px;height:50px;float: left">思明分局</div>
+    <div  id="changeDuty" class="data" style="width:130px;height:50px;float: left">某某某</div>
+    <!--<div  class="reg"></div>-->
+    <div  id="changeName2" class="from" style="width:280px;height:50px;float: left">湖里分局</div>
+    <div  id="changeDuty2" class="data" style="width:130px;height:50px;float: left">某某某</div>
+    <span class="mtitle"></span>
+</div>
+</body>
+<script type="text/javascript">
+
+    function gotData(dutyTime) {
+        $.post('../duty/data.do?dutyTime='+ dutyTime, function(result) {
+            for(var i = 0; i < 2; i++) {
+                if('局领导'== result[i].DutyStation){
+                    $("#sjDuty").html(result[i].MainDuty);
+                }else if ('指挥情报中心'== result[i].DutyStation){
+                    $("#zhzxDuty").html(result[i].MainDuty + '、' + result[i].SubDuty);
+                }
+            }
+        }, "json");
+    }
+    var setTimes = 0; // 用于计算
+    function gotData2(dutyTime) {
+        $.post('../duty/data2.do?dutyTime='+ dutyTime, function(result) {
+            // 每次显示2个，8个分四次循环显示，8个循环结束重新循环显示
+            if(setTimes == 8){
+                setTimes = 0;
+                $(".fadeToggle").removeClass("fadeToggle"); //移除类
+                $(".fadeToggle").fadeToggle(500);
+                for(var i = 0; i < 8; i++) {
+                    if(setTimes == i){
+                       $("#changeName").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                       $("#changeDuty").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                       $("#changeName2").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                       $("#changeDuty2").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                       $(".fadeToggle").fadeToggle(500);
+//                       setTimeout(function() { //在淡入之后更新数据
+                          $('#changeName').html(result[setTimes].DutyStation);
+                          $("#changeDuty").html(result[setTimes].MainDuty);
+                          $('#changeName2').html(result[setTimes+1].DutyStation);
+                          $("#changeDuty2").html(result[setTimes+1].MainDuty);
+//                        },500);
+                       $(".fadeToggle").fadeToggle(500);
+                    }
+                }
+                setTimes+=2
+            } else {
+                $(".fadeToggle").removeClass("fadeToggle"); //移除类
+                for(var i = 0; i < 8; i++) {
+                    if(setTimes == i){
+                        $("#changeName").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                        $("#changeDuty").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡
+                        $("#changeName2").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                        $("#changeDuty2").addClass("fadeToggle"); //将变化的数据添加类 以便淡入淡出
+                        $(".fadeToggle").fadeToggle(500);
+//                        setTimeout(function() { //在淡入之后更新数据
+                            $('#changeName').html(result[setTimes].DutyStation);
+                            $("#changeDuty").html(result[setTimes].MainDuty);
+                            $("#changeName2").html(result[setTimes+1].DutyStation);
+                            $("#changeDuty2").html(result[setTimes+1].MainDuty);
+//                        }, 500);
+                        $(".fadeToggle").fadeToggle(500);
+                    }
+                }
+                setTimes+=2
+            }
+        }, "json");
+    }
+
+    $(function() {
+        var myDate = new Date();
+        var year  = myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+        var month = myDate.getMonth() + 1;       //获取当前月份(0-11,0代表1月)
+        var day = myDate.getDate();        //获取当前日(1-31)
+        var dutyTime = year + '-' + month +  '-' + day
+        gotData(dutyTime);
+        gotData2(dutyTime);
+    });
+
+    setInterval(function() {
+        var myDate = new Date();
+        var year  = myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+        var month = myDate.getMonth() + 1;       //获取当前月份(0-11,0代表1月)
+        var day = myDate.getDate();        //获取当前日(1-31)
+        var dutyTime = year + '-' + month +  '-' + day
+        gotData2(dutyTime);
+    }, 5*1000);
+
+    setInterval(function() {
+        var myDate = new Date();
+        var year  = myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+        var month = myDate.getMonth() + 1;       //获取当前月份(0-11,0代表1月)
+        var day = myDate.getDate();        //获取当前日(1-31)
+        var dutyTime = year + '-' + month +  '-' + day
+        gotData(dutyTime);
+    }, 5*1000);
+
+</script>

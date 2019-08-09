@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="js/swiper-4.5.0/dist/css/swiper.min.css">
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html, body {
+            width: 1920px;
+            height: 1080px;
+            background: url("images/bg.png");
+            background-size: 100% 100%;
+        }
+
+        .swiper-slide {
+            background: url("images/cover-b.png") center;
+            background-size: 100% 100%;
+            width: 560px;
+            height: 643px;
+            position: relative;
+        }
+
+        .swiper-slide-active {
+            background: url("images/cover-a.png");
+            background-size: 100% 100%;
+        }
+
+        .swiper-container-3d .swiper-slide-shadow-left, .swiper-container-3d .swiper-slide-shadow-right {
+            opacity: 0.5;
+            background-image: none;
+        }
+
+        .swiper-slide-prev {
+            transform: translate3d(-100px, 80px, -600px) rotateX(0deg) rotateY(60deg) !important;
+            opacity: 0.6;
+        }
+
+        .swiper-slide-next {
+            transform: translate3d(100px, 80px, -600px) rotateX(0deg) rotateY(-60deg) !important;
+            opacity: 0.6;
+        }
+
+        .circle {
+            width: 500px;
+            height: 500px;
+            background: url("images/bg-circle.gif");
+            position: absolute;
+            top: 60px;
+            left: 33px;
+        }
+
+        .icon {
+
+        }
+    </style>
+</head>
+<body>
+<div class="swiper-container swiper-no-swiping">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <div class="icon jingli"></div>
+        </div>
+        <div class="swiper-slide">
+            <div class="icon jingqing"></div>
+        </div>
+        <div class="swiper-slide">
+            <div class="icon zhian"></div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/swiper-4.5.0/dist/js/swiper.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var mySwiper = new Swiper('.swiper-container', {
+            autoplay: {
+                delay: 3000
+            },
+            initialSlide: 2,
+            loop: true,
+            slidesPerView: 'auto',
+            loopedSlides: -1,
+            effect: 'coverflow',
+            centeredSlides: true,
+            coverflowEffect: {
+                rotate: 20,
+                stretch: -50,
+                depth: 320,
+                modifier: 2,
+                slideShadows: true
+            },
+            on: {
+                init: function () {
+                    //Swiper初始化了
+                    console.log('当前的slide序号是' + this.activeIndex);
+                    console.log(this.slides[this.activeIndex]);
+                    $.each(this.slides, function (i, e) {
+                        $($(e).children()[0]).removeClass("circle");
+                    });
+                    $($(this.slides[this.activeIndex]).children()[0]).addClass("circle")
+                }
+            }
+        });
+        mySwiper.on('slideChange', function () {
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <title>可视化大屏展示系统--警情热力图</title>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/bootstrap/js/bootstrap.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 1080px;
+            width: 1920px;
+            background: url(images/jingqing/sky.png), url(images/jingqing/bg001.png)
+        }
+
+        #content {
+            height: 1080px;
+            width: 1920px;
+            font-family: '微软雅黑';
+            position: absolute;
+            overflow: hidden;
+        }
+
+        #main {
+            width: 1910px;
+            height: 1070px;
+        }
+
+        #mLeft {
+            border: 0px solid red;
+            height: 1070px;
+            width: 870px;
+            float: left;
+            position: absolute;
+            margin-left: 30px;
+        }
+
+        #mRight {
+            border: 0px solid red;
+            width: 1040px;
+            height: 1070px;
+            overflow: hidden;
+            position: absolute;
+            margin-left: 895px;
+        }
+
+        #leftTop {
+            border: 0px solid red;
+            width: 810px;
+            height: 80px;
+            float: left;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        #leftData {
+            border: 0px solid red;
+            width: 495px;
+            height: 304px;
+            float: left;
+            overflow: hidden;
+            margin-top: 25px;
+        }
+
+        #leftFB {
+            border: 0px solid red;
+            width: 368px;
+            height: 304px;
+            float: left;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #leftBot {
+            border: 0px solid red;
+            width: 855px;
+            height: 410px;
+            float: left;
+            overflow: hidden;
+            margin-top: 295px;
+        }
+
+        #rigthTop {
+            width: 1040px;
+            height: 970px;
+            position: absolute;
+            overflow: hidden;
+            border: 0px red solid;
+        }
+
+        #rightBot {
+            width: 1000px;
+            height: 100px;
+            position: absolute;
+            overflow: hidden;
+            border: 0px red solid;
+        }
+
+        #leftCenter {
+            border: 0px solid red;
+            width: 865px;
+            height: 355px;
+            float: left;
+            overflow: hidden;
+            position: absolute;
+            margin-top: 390px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="modal fade" id="loginModal" tabindex="-1" name="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:25%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">登录校验失败：请重新登录</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="turnBack()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="main">
+            <div id="mLeft">
+                <div id="leftTop">
+                    <iframe src="jingqing/Timejq_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+                <div id="leftData">
+                    <iframe src="jingqing/data_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+                <div id="leftFB">
+                    <iframe src="jingqing/jingfenbu_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+                <div id="leftCenter">
+                    <iframe src="jingqing/anjianguanlian_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+
+                <div id="leftBot">
+                    <iframe src="jingqing/24hours_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+            </div>
+
+            <div id="mRight">
+                <div id="rightTop">
+                    <iframe frameborder="0" src="./jingqing/accidentMap_static.html" width="100%" height="950px" scrolling="no"></iframe>
+                </div>
+                <div id="rightBot">
+                    <iframe frameborder="0" src="./jingqing/gungun_static.html" width="100%" height="100%" scrolling="no"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
