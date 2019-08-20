@@ -1,155 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
-	<link rel="stylesheet" href="js/swiper-4.5.0/dist/css/swiper.min.css">
-	<style>
-		* {
-			margin: 0;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="js/swiper-4.5.0/dist/css/swiper.min.css">
+    <style>
+        * {
+            margin: 0;
+        }
 
-		html, body {
-			width: 1920px;
-			height: 1080px;
-			background: url("images/bg.png");
-			background-size: 100% 100%;
-			z-index: 1;
-		}
+        html, body {
+            width: 1920px;
+            height: 1080px;
+            background: url("images/bg.png");
+            background-size: 100% 100%;
+            z-index: 1;
+        }
 
-		.swiper-container {
-			top: 261px;
-		}
+        .swiper-container {
+            top: 261px;
+        }
 
-		.swiper-slide {
-			background: url("images/cover-b.png") center;
-			background-size: 100% 100%;
-			width: 560px;
-			height: 643px;
-			position: relative;
-		}
+        .swiper-slide {
+            background: url("images/cover-b.png") center;
+            background-size: 100% 100%;
+            width: 560px;
+            height: 643px;
+            position: relative;
+            cursor: pointer;
+        }
 
-		.swiper-slide-active {
-			background: url("images/cover-a.png");
-			background-size: 100% 100%;
-		}
+        .swiper-slide-active {
+            background: url("images/cover-a.png");
+            background-size: 100% 100%;
+        }
 
-		.swiper-container-3d .swiper-slide-shadow-left, .swiper-container-3d .swiper-slide-shadow-right {
-			opacity: 0.5;
-			background-image: none;
-		}
+        .swiper-container-3d .swiper-slide-shadow-left, .swiper-container-3d .swiper-slide-shadow-right {
+            opacity: 0.5;
+            background-image: none;
+        }
 
-		.swiper-slide-prev {
-			transform: translate3d(-150px, 80px, -600px) rotateX(0deg) rotateY(50deg) !important;
-			opacity: 0.6;
-		}
+        .swiper-slide-prev {
+            transform: translate3d(-150px, 80px, -600px) rotateX(0deg) rotateY(50deg) !important;
+            opacity: 0.6;
+        }
 
-		.swiper-slide-next {
-			transform: translate3d(150px, 80px, -600px) rotateX(0deg) rotateY(-50deg) !important;
-			opacity: 0.6;
-		}
+        .swiper-slide-next {
+            transform: translate3d(150px, 80px, -600px) rotateX(0deg) rotateY(-50deg) !important;
+            opacity: 0.6;
+        }
 
-		.circle {
-			width: 500px;
-			height: 500px;
-			background: url("images/bg-circle.gif");
-			position: absolute;
-			top: 60px;
-			left: 33px;
-			z-index: 2;
-		}
+        .circle {
+            width: 500px;
+            height: 500px;
+            background: url("images/bg-circle.gif");
+            position: absolute;
+            top: 60px;
+            left: 33px;
+            z-index: 2;
+        }
 
-		.icon {
-			position: absolute;
-			top: 234px;
-			left: 216px;
-			z-index: 3;
-		}
+        .icon {
+            position: absolute;
+            top: 234px;
+            left: 216px;
+            z-index: 3;
+        }
 
-		.icon-jingli {
-			width: 146px;
-			height: 164px;
-			background: url("images/icon-jingli.png");
-			background-size: 100% 100%;
-		}
+        .icon-jingli {
+            width: 146px;
+            height: 164px;
+            background: url("images/icon-jingli.png");
+            background-size: 100% 100%;
+        }
 
-		.icon-jingqing {
-			width: 146px;
-			height: 164px;
-			background: url("images/icon-jingqing.png");
-			background-size: 100% 100%;
-		}
+        .icon-jingqing {
+            width: 146px;
+            height: 164px;
+            background: url("images/icon-jingqing.png");
+            background-size: 100% 100%;
+        }
 
-		.icon-zhian {
-			width: 146px;
-			height: 164px;
-			background: url("images/icon-zhian.png");
-			background-size: 100% 100%;
-		}
+        .icon-zhian {
+            width: 146px;
+            height: 164px;
+            background: url("images/icon-zhian.png");
+            background-size: 100% 100%;
+        }
 
-		.title {
-			display: none;
-			width: 186px;
-			height: 62px;
-			background: url("images/title.png");
-			background-size: 100% 100%;
-			position: absolute;
-			bottom: 47px;
-			left: 189px;
-			font-size: 20px;
-			font-weight: 400;
-			color: rgba(0, 255, 255, 1);
-			line-height: 60px;
-			text-align: center;
-		}
+        .title {
+            display: none;
+            width: 186px;
+            height: 62px;
+            background: url("images/title.png");
+            background-size: 100% 100%;
+            position: absolute;
+            bottom: 47px;
+            left: 189px;
+            font-size: 20px;
+            font-weight: 400;
+            color: rgba(0, 255, 255, 1);
+            line-height: 60px;
+            text-align: center;
+            z-index: 3;
+        }
 
-		.view {
-			display: none;
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 3;
-		}
-	</style>
+        .view {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+        }
+    </style>
 </head>
 <body>
-<div class="swiper-container swiper-no-swiping">
-	<div class="swiper-wrapper">
-		<div class="swiper-slide" data-link="jingqing.html">
-			<div class="icon icon-jingqing"></div>
-			<div></div>
-			<div class="title">警情</div>
-		</div>
-		<div class="swiper-slide" data-link="jingli.html">
-			<div class="icon icon-jingli"></div>
-			<div></div>
-			<div class="title">警力</div>
-		</div>
-		<div class="swiper-slide" data-link="zhian.html">
-			<div class="icon icon-zhian"></div>
-			<div></div>
-			<div class="title">治安</div>
-		</div>
-	</div>
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide" data-link="jingqing.html">
+            <div class="icon icon-jingqing"></div>
+            <div></div>
+            <div class="title">警情</div>
+        </div>
+        <div class="swiper-slide" data-link="jingli.html">
+            <div class="icon icon-jingli"></div>
+            <div></div>
+            <div class="title">警力</div>
+        </div>
+        <div class="swiper-slide" data-link="zhian.html">
+            <div class="icon icon-zhian"></div>
+            <div></div>
+            <div class="title">治安</div>
+        </div>
+    </div>
 </div>
 <iframe src="" frameborder="0" id="view" class="view"></iframe>
 <script src="js/jquery-1.9.1.js"></script>
 <script src="js/swiper-4.5.0/dist/js/swiper.min.js"></script>
 <script>
     $(document).ready(function () {
-        var playTime = 30000;
+        var pages = ["jingqing", "jingli", "zhian"];
+        var index = 1;
+        var page = getQueryVariable("page");
+        if (page) {
+            index = pages.indexOf(page)
+        }
         var $view = $("#view");
-        var timer = null;
-        clearTimeout(timer);
         var mySwiper = new Swiper('.swiper-container', {
-            autoplay: {
-                delay: playTime
-            },
-            initialSlide: 1,
+            initialSlide: index,
             loop: true,
             slidesPerView: 'auto',
             loopedSlides: 4,
@@ -176,13 +178,10 @@
                     $(this.slides[this.activeIndex]).css('opacity', '1');
                     $($(this.slides[this.activeIndex]).children()[1]).addClass("circle");
                     $($(this.slides[this.activeIndex]).children()[2]).show();
-                    timer = setTimeout(runViews, 5000);
                 }
             }
         });
         mySwiper.on('slideChange', function () {
-            clearTimeout(timer);
-            $view.fadeOut();
             $.each(mySwiper.slides, function (i, e) {
                 $($(e).children()[1]).removeClass('circle');
                 $($(e).children()[2]).hide();
@@ -195,11 +194,27 @@
             $(mySwiper.slides[mySwiper.activeIndex]).css('opacity', '1');
             $($(mySwiper.slides[mySwiper.activeIndex]).children()[1]).addClass("circle");
             $($(mySwiper.slides[mySwiper.activeIndex]).children()[2]).show();
-            timer = setTimeout(runViews, 5000);
+        });
+        mySwiper.on('click', function () {
+            if (mySwiper.clickedIndex === mySwiper.activeIndex) {
+                runViews()
+            }
         });
 
         function runViews() {
             $view.attr('src', $(mySwiper.slides[mySwiper.activeIndex]).attr('data-link')).fadeIn();
+        }
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+            return false;
         }
     })
 </script>

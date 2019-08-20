@@ -28,6 +28,7 @@
             position: absolute;
             overflow: hidden;
             border: 0px yellow solid;
+            z-index: 1;
         }
 
         #top {
@@ -64,37 +65,58 @@
             left: 1520px;
         }
 
+        .icon {
+            display: block;
+            width: 68px;
+            height: 71px;
+            background: url("images/icon_return.png") no-repeat;
+            background-size: 100% 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .icon:hover {
+            background: url("images/icon_return_s.png") no-repeat;
+            background-size: 100% 100%;
+        }
+
         /* #fenjuMap{height:930px;width:1420px;position:absolute;overflow:hidden;} */
     </style>
 </head>
 
 <body>
-    <div class="modal fade" id="loginModal" tabindex="-1" name="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="width:25%">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">登录校验失败：请重新登录</h4>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="turnBack()">关闭</button>
-                </div>
+<i class="icon" onclick="goHome('zhian')"></i>
+<div class="modal fade" id="loginModal" tabindex="-1" name="" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width:25%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">登录校验失败：请重新登录</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="turnBack()">关闭</button>
             </div>
         </div>
     </div>
-    <div id="content">
-        <div id="top">
-            <iframe src="./zhian/top_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
-        </div>
-        <div id="left">
-            <iframe frameborder="0" src="./zhian/fenjuxin_static.html" width="100%" height="100%" scrolling="no"></iframe>
-        </div>
-        <div id="middle">
-            <iframe frameborder="0" src="./zhian/fenjuMap_static.html" width="100%" height="100%" scrolling="no"></iframe>
-        </div>
-        <div id="right">
-            <iframe frameborder="0" src="./zhian/paichusuoxin_static.html" width="100%" height="100%" scrolling="no"></iframe>
-        </div>
+</div>
+<div id="content">
+    <div id="top">
+        <iframe src="./zhian/top_static.html" frameborder="0" width="100%" height="100%" scrolling="no"></iframe>
     </div>
+    <div id="left">
+        <iframe frameborder="0" src="./zhian/fenjuxin_static.html" width="100%" height="100%" scrolling="no"></iframe>
+    </div>
+    <div id="middle">
+        <iframe frameborder="0" src="./zhian/fenjuMap_static.html" width="100%" height="100%" scrolling="no"></iframe>
+    </div>
+    <div id="right">
+        <iframe frameborder="0" src="./zhian/paichusuoxin_static.html" width="100%" height="100%"
+                scrolling="no"></iframe>
+    </div>
+</div>
 </body>
 
 </html>
